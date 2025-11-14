@@ -1,0 +1,53 @@
+# Env (non committare segreti)
+.env
+!.env.example
+
+# Dipendenze
+node_modules/
+
+# Build Vite
+dist/
+
+# Vercel
+.vercel/
+
+# Log & debug
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Cache
+.eslintcache
+.cache/
+
+# Coverage test
+coverage/
+
+# File OS
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.env

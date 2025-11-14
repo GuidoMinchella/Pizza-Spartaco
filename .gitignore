@@ -1,0 +1,42 @@
+# Env files (do not commit secrets)
+**/.env
+!**/.env.example
+
+# Dependencies
+**/node_modules/
+
+# Build outputs
+frontend/dist/
+**/dist/
+
+# Vercel project files
+.vercel/
+
+# Logs & debug
+logs/
+**/logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Caches
+**/.cache/
+.eslintcache
+
+# Test coverage
+coverage/
+
+# Temp files
+tmp/
+temp/
+**/.tmp/
+**/tmp/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Editor settings (optional)
+.vscode/

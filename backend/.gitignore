@@ -1,0 +1,34 @@
+# Env (non committare segreti)
+.env
+!.env.example
+
+# Dipendenze
+node_modules/
+
+# Log & debug
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build/Artifacts (se presenti)
+build/
+dist/
+
+# Cache
+.eslintcache
+.cache/
+
+# Coverage test
+coverage/
+
+# File temporanei
+tmp/
+temp/
+.tmp/
+
+# File OS
+.DS_Store
+Thumbs.db
