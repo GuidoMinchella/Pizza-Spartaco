@@ -252,7 +252,7 @@ const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
               <p className="text-sm text-neutral-gray-700 mb-4">
                 Indicazioni sugli allergeni presenti nei prodotti. Contattaci per informazioni dettagliate.
               </p>
-              <div className="max-h-[60vh] overflow-auto pr-1">
+  <div id="menu-scroll-container" className="max-h-[60vh] overflow-auto pr-1">
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   {[
                     { id: 'glutine', label: 'Glutine', icon: 'glutine.png', desc: 'Cereali con glutine (grano, segale, orzo, farro).' },
@@ -375,7 +375,7 @@ const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
               </div>
             </div>
 
-            {/* Mobile: contenuto senza sidebar */}
+            {/* Mobile: contenuto senza sidebar, ogni card in piena larghezza con separatori grigi */}
             <div className="md:hidden">
               {activeCategory === 'all'
                 ? (
@@ -385,9 +385,11 @@ const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
                     return (
                       <div key={cat.id} className="mb-10">
                         <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-6">{cat.label}</h2>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <div className="divide-y divide-neutral-gray-300/40">
                           {productsInCat.map((product) => (
-                            <ProductCard key={product.id} product={product} showFullDetails compact variant="menu" sizeLabels={{ slice: 'Pinsa', half: 'Tonda', full: 'Pala' }} />
+                            <div key={product.id} className="py-2">
+                              <ProductCard product={product} showFullDetails compact variant="menu" sizeLabels={{ slice: 'Pinsa', half: 'Tonda', full: 'Pala' }} />
+                            </div>
                           ))}
                         </div>
                       </div>
@@ -402,9 +404,11 @@ const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
                     return (
                       <div className="mb-10">
                         <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-6">{activeCat.label}</h2>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <div className="divide-y divide-neutral-gray-300/40">
                           {productsInCat.map((product) => (
-                            <ProductCard key={product.id} product={product} showFullDetails compact variant="menu" sizeLabels={{ slice: 'Pinsa', half: 'Tonda', full: 'Pala' }} />
+                            <div key={product.id} className="py-2">
+                              <ProductCard product={product} showFullDetails compact variant="menu" sizeLabels={{ slice: 'Pinsa', half: 'Tonda', full: 'Pala' }} />
+                            </div>
                           ))}
                         </div>
                       </div>
