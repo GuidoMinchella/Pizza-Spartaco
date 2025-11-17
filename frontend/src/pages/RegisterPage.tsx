@@ -28,6 +28,7 @@ const RegisterPage: React.FC = () => {
       style={{ backgroundColor: 'rgba(128, 128, 128, 0.5)' }}
       aria-modal="true"
       role="dialog"
+      onClick={() => { try { if (window.history.length > 1) window.history.back(); else window.location.href = '/'; } catch {} }}
     >
       <div className="w-full max-w-md mx-4" onClick={(e) => e.stopPropagation()}>
         <RegisterForm onSubmit={registerUser} onClose={() => { window.location.href = '/' }} />
