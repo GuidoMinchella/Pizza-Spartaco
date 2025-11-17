@@ -136,82 +136,88 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showFullDetails = fa
         <div className="image_container">
           <img src={product.image} alt={product.name} className="image" loading="lazy" />
         </div>
-        <div className="title"><span>{product.name}</span></div>
-        {!hideDescription && product.description && (
-          <div className="size"><span className="opacity-80">{product.description}</span></div>
-        )}
+        <div className="content">
+          <div className="title-row">
+            <div className="title"><span>{product.name}</span></div>
+            {/* Prezzo in alto a destra su mobile; su desktop resta nella sezione action */}
+            <div className="price-top sm:hidden">€{(getPrice() * quantity).toFixed(2)}</div>
+          </div>
 
-        {Array.isArray(product.allergens) && product.allergens.length > 0 && (
-          <div className="size">
-            <span>Allergeni</span>
-            <div className="flex flex-wrap items-center gap-2">
-              {product.allergens.map((a) => (
-                <img key={a} src={`/allergeni/${a}.png`} alt={a} className="w-5 h-5" />
-              ))}
+          {!hideDescription && product.description && (
+            <div className="size"><span className="opacity-80">{product.description}</span></div>
+          )}
+
+          {Array.isArray(product.allergens) && product.allergens.length > 0 && (
+            <div className="size">
+              <span>Allergeni</span>
+              <div className="flex flex-wrap items-center gap-2">
+                {product.allergens.map((a) => (
+                  <img key={a} src={`/allergeni/${a}.png`} alt={a} className="w-5 h-5" />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {product.category !== 'bevande' && (
+            <div className="size">
+              <span>Dimensione</span>
+              <ul className="list-size">
+                <li className="item-list">
+                  <button
+                    className={`item-list-button ${selectedSize === 'slice' ? 'item-list-button-active' : ''}`}
+                    onClick={() => canSlice && setSelectedSize('slice')}
+                  >
+                    {sizeLabels.slice}
+                  </button>
+                </li>
+                <li className="item-list">
+                  <button
+                    className={`item-list-button ${selectedSize === 'half' ? 'item-list-button-active' : ''}`}
+                    onClick={() => canHalf && setSelectedSize('half')}
+                  >
+                    {sizeLabels.half}
+                  </button>
+                </li>
+                <li className="item-list">
+                  <button
+                    className={`item-list-button ${selectedSize === 'full' ? 'item-list-button-active' : ''}`}
+                    onClick={() => canFull && setSelectedSize('full')}
+                  >
+                    {sizeLabels.full}
+                  </button>
+                </li>
+              </ul>
+            </div>
+          )}
+
+          {/* Selettore quantità su mobile; rimosso pulsante rapido "+" */}
+          <div className="flex items-center gap-2">
+            <div className="flex items-center bg-[#18181b] text-white border border-[#18181b] rounded-lg">
+              <button
+                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                className="px-3 py-1 hover:bg-[#202022] transition-colors"
+                aria-label="Diminuisci quantità"
+              >
+                −
+              </button>
+              <span className="px-4 py-1 font-medium" aria-live="polite">{quantity}</span>
+              <button
+                onClick={() => setQuantity(quantity + 1)}
+                className="px-3 py-1 hover:bg-[#202022] transition-colors"
+                aria-label="Aumenta quantità"
+              >
+                +
+              </button>
             </div>
           </div>
-        )}
 
-        {product.category !== 'bevande' && (
-          <div className="size">
-            <span>Dimensione</span>
-            <ul className="list-size">
-              <li className="item-list">
-                <button
-                  className={`item-list-button ${selectedSize === 'slice' ? 'item-list-button-active' : ''}`}
-                  onClick={() => canSlice && setSelectedSize('slice')}
-                >
-                  {sizeLabels.slice}
-                </button>
-              </li>
-              <li className="item-list">
-                <button
-                  className={`item-list-button ${selectedSize === 'half' ? 'item-list-button-active' : ''}`}
-                  onClick={() => canHalf && setSelectedSize('half')}
-                >
-                  {sizeLabels.half}
-                </button>
-              </li>
-              <li className="item-list">
-                <button
-                  className={`item-list-button ${selectedSize === 'full' ? 'item-list-button-active' : ''}`}
-                  onClick={() => canFull && setSelectedSize('full')}
-                >
-                  {sizeLabels.full}
-                </button>
-              </li>
-            </ul>
-          </div>
-        )}
-
-        <div className="flex items-center gap-2">
-          <div className="flex items-center bg-[#18181b] text-white border border-[#18181b] rounded-lg">
-            <button
-              onClick={() => setQuantity(Math.max(1, quantity - 1))}
-              className="px-3 py-1 hover:bg-[#202022] transition-colors"
-              aria-label="Diminuisci quantità"
-            >
-              −
-            </button>
-            <span className="px-4 py-1 font-medium" aria-live="polite">{quantity}</span>
-            <button
-              onClick={() => setQuantity(quantity + 1)}
-              className="px-3 py-1 hover:bg-[#202022] transition-colors"
-              aria-label="Aumenta quantità"
-            >
-              +
+          {/* Pulsante carrello visibile su mobile e desktop; prezzo desktop nella sezione action */}
+          <div className="action">
+            <div className="price hidden sm:block"><span>€{(getPrice() * quantity).toFixed(2)}</span></div>
+            <button className="cart-button flex" onClick={handleAddToCart}>
+              <span>Aggiungi al carrello</span>
             </button>
           </div>
-          {/* Prezzo affiancato al selettore quantità su mobile */}
-          <span className="ml-auto sm:hidden font-bold text-neutral-black text-2xl">€{(getPrice() * quantity).toFixed(2)}</span>
-        </div>
-
-        <div className="action">
-          <div className="price hidden sm:block"><span>€{(getPrice() * quantity).toFixed(2)}</span></div>
-          <button className="cart-button" onClick={handleAddToCart}>
-            <ShoppingCart className="cart-icon" />
-            <span>Aggiungi al carrello</span>
-          </button>
         </div>
 
         {showToast && (
