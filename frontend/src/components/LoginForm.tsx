@@ -8,9 +8,10 @@ interface LoginFormProps {
   onNavigateForgot?: () => void;
   successMessage?: string;
   errorMessage?: string;
+  onClose?: () => void;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onNavigateRegister, onNavigateForgot, successMessage, errorMessage }) => {
+const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onNavigateRegister, onNavigateForgot, successMessage, errorMessage, onClose }) => {
   const [showPassword, setShowPassword] = useState(false);
   const startGoogleLogin = () => {
     // Reindirizza al backend che avvia l'OAuth Google
@@ -36,12 +37,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onNavigateRegister, onN
   };
 
   return (
-    <div className="login-ui">
+    <div className="login-ui login-ui--login">
       <div className="container" style={{ position: 'relative' }}>
         <button
           type="button"
-          aria-label="Torna alla home"
-          onClick={() => { try { window.location.href = '/'; } catch {} }}
+          aria-label="Chiudi"
+          onClick={() => { try { if (onClose) onClose(); else if (window.history.length > 1) window.history.back(); else window.location.href = '/'; } catch {} }}
           style={{
             position: 'absolute',
             top: 8,
@@ -57,7 +58,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onNavigateRegister, onN
           }}
         >
           <ChevronLeft size={16} color="#9ca3af" />
-          <span>Home</span>
         </button>
         <div className="heading">Accedi</div>
         {!!successMessage && (
