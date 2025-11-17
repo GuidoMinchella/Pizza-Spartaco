@@ -17,7 +17,14 @@ const paymentsRouter = require('./routes/payments');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors());
+// Limita le origini CORS al/i dominio/i del frontend in produzione
+const allowedOrigins = (process.env.CORS_ORIGINS || process.env.FRONTEND_URL || '')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
+app.use(cors({
+  origin: allowedOrigins.length ? allowedOrigins : true,
+}));
 app.use(express.json());
 
 // Rotte principali
