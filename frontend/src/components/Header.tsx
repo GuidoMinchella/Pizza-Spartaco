@@ -112,9 +112,9 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onNavigate, onOpenLoginMod
   ];
 
   return (
-    <header className="fixed top-6 left-0 right-0 z-50 flex justify-center md:justify-end px-4 md:px-0">
+    <header className="fixed top-2 md:top-6 left-0 right-0 z-50 flex justify-center md:justify-end px-3 md:px-0">
       {/* Rettangolo orizzontale con bordi arrotondati */}
-      <div ref={containerRef} className="bg-black rounded-2xl shadow-soft border border-neutral-gray-800 flex items-center px-4 py-2 md:px-6 md:py-3 relative">
+      <div ref={containerRef} className="bg-black rounded-2xl shadow-soft border border-neutral-gray-800 flex items-center gap-1 md:gap-4 px-3 py-1 md:px-6 md:py-3 relative min-w-0">
         {indicator.visible && (
           <div
             className="hidden md:block absolute rounded-xl bg-white shadow-soft transition-all duration-300 ease-out z-0 pointer-events-none"
@@ -127,7 +127,7 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onNavigate, onOpenLoginMod
           className="flex items-center hover:opacity-80 transition-opacity relative z-10"
           aria-label="Vai alla Home"
         >
-          <img src="/logo1.png" alt="Pizza Spartaco" className="h-16 w-auto" />
+          <img src="/logo1.png" alt="Pizza Spartaco" className="h-10 sm:h-12 md:h-16 w-auto max-w-[40vw] flex-shrink-0 object-contain" />
         </button>
 
         {/* Linea verticale */}
@@ -152,15 +152,15 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onNavigate, onOpenLoginMod
         </nav>
 
         {/* Azioni a destra: carrello + hamburger mobile */}
-        <div className="flex items-center gap-2 ml-4">
+        <div className="flex items-center gap-2 ml-3 md:ml-4">
           <button
             onClick={() => onNavigate('cart')}
             ref={(el) => { itemRefs.current['cart'] = el; }}
             id="navbar-cart-button"
-            className="relative p-2 rounded-lg transition-colors z-10"
+            className="relative p-1 md:p-2 rounded-lg transition-colors z-10"
             aria-label="Apri carrello"
           >
-            <ShoppingCart className={`w-6 h-6 ${currentPage === 'cart' ? 'text-[#ff7300]' : 'text-white'}`} />
+            <ShoppingCart className={`w-5 h-5 md:w-6 md:h-6 ${currentPage === 'cart' ? 'text-[#ff7300]' : 'text-white'}`} />
             {getTotalItems() > 0 && (
               <span className="absolute -top-1 -right-1 bg-primary-orange text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                 {getTotalItems()}
