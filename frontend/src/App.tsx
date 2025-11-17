@@ -164,6 +164,17 @@ function App() {
     window.history.pushState({ page }, '', path);
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Se la pagina ha un contenitore scroll interno (Menu), portalo al top
+    if (page === 'menu') {
+      try {
+        setTimeout(() => {
+          const el = document.getElementById('menu-scroll-container');
+          if (el) {
+            (el as HTMLElement).scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        }, 0);
+      } catch {}
+    }
   };
 
   useEffect(() => {
