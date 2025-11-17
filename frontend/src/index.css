@@ -686,3 +686,52 @@
   outline: none;
   border: 2px solid #ff7300; /* evidenzia il campo attivo con colore brand */
 }
+
+/* Riduzioni leggere per dispositivi mobili */
+@media (max-width: 640px) {
+  /* Centra verticalmente e orizzontalmente le card su mobile */
+  .login-ui {
+    min-height: 100vh; /* occupa l’intera altezza del viewport */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .login-ui .container {
+    max-width: 320px; /* più larga su mobile */
+    border-radius: 16px;
+    padding: 10px 14px; /* meno altezza complessiva */
+    margin: 10px; /* riduce spazio intorno alla card */
+    box-shadow: rgba(133, 189, 215, 0.45) 0px 16px 16px -16px; /* ombra più leggera */
+    max-height: 70vh; /* limita l’altezza su schermi piccoli */
+    overflow-y: auto; /* abilita lo scroll interno se necessario */
+  }
+  /* Override specifico per la card Accedi: più larga e margini ridotti */
+  .login-ui.login-ui--login .container {
+    max-width: 380px;
+    width: 100%;
+    margin: 6px;
+  }
+  .login-ui .heading {
+    font-size: 20px; /* ancora più compatto */
+  }
+  .login-ui .form .input,
+  .login-ui .form .password-input {
+    padding: 8px 10px; /* ulteriore riduzione padding */
+    border-radius: 12px; /* bordi più piccoli */
+    margin-top: 8px; /* riduce lo spacing verticale */
+    box-shadow: rgba(255, 115, 0, 0.20) 0px 6px 6px -5px; /* ombra più bassa */
+  }
+  .login-ui .form .login-button {
+    padding-block: 9px; /* bottone più compatto */
+    border-radius: 12px;
+    margin: 10px auto; /* riduce margini verticali */
+    font-size: 0.85rem; /* testo leggermente più piccolo */
+  }
+  /* Restringi i social su mobile ma NON Google */
+  .login-ui .social-account-container .social-accounts .social-button:not(.google) {
+    width: 28px; /* ancora più piccoli */
+  }
+  .login-ui .register-link a {
+    font-size: 9px; /* link più compatto */
+  }
+}
