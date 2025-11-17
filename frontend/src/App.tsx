@@ -387,7 +387,7 @@ function App() {
             role="dialog"
             onClick={closeOverlay}
           >
-            <div className="login-ui w-full max-w-md mx-4" onClick={(e) => e.stopPropagation()}>
+            <div className="login-ui w-full max-w-md mx-2 sm:mx-4" onClick={(e) => e.stopPropagation()}>
               {authOverlayPage === 'register' ? (
                 <RegisterForm
                   onSubmit={registerUser}
@@ -403,7 +403,7 @@ function App() {
                   onAutoLogin={autoLoginAfterRegister}
                 />
               ) : authOverlayPage === 'login' ? (
-                <LoginForm onNavigateRegister={openRegisterOverlay} onSubmit={loginUser} onNavigateForgot={openForgotOverlay} successMessage={loginSuccessMessage || undefined} errorMessage={loginErrorMessage || undefined} />
+                <LoginForm onNavigateRegister={openRegisterOverlay} onSubmit={loginUser} onNavigateForgot={openForgotOverlay} successMessage={loginSuccessMessage || undefined} errorMessage={loginErrorMessage || undefined} onClose={closeOverlay} />
               ) : authOverlayPage === 'forgot' ? (
                 <ForgotPasswordForm
                   onClose={closeOverlay}
