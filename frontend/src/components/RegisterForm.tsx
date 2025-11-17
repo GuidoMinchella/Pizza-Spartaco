@@ -204,8 +204,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, onNavigateLogin, 
         <div className="container" style={{ position: 'relative' }}>
           <button
             type="button"
-            aria-label="Torna alla home"
-            onClick={() => { try { window.location.href = '/'; } catch {} }}
+            aria-label="Chiudi"
+            onClick={() => { try { if (onClose) onClose(); else if (window.history.length > 1) window.history.back(); else window.location.href = '/'; } catch {} }}
             style={{
               position: 'absolute',
               top: 8,
@@ -221,7 +221,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, onNavigateLogin, 
             }}
           >
             <ChevronLeft size={16} color="#9ca3af" />
-            <span>Home</span>
           </button>
           <div className="heading">Registrati</div>
           <form className="form" onSubmit={handleSubmit}>
