@@ -361,35 +361,35 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           }}
         >
           <div className={`absolute left-0 md:left-[10%] bottom-[20%] z-20 p-6 sm:p-8 md:p-10 transition-all duration-700 ease-out ${heroEntered ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'}`} style={{ fontFamily: 'Roboto Slab, serif' }}>
-            <h1 className="text-left font-extrabold leading-tight tracking-tight text-5xl sm:text-6xl md:text-8xl">
+            <h1 className="text-left font-extrabold leading-tight tracking-tight text-4xl sm:text-5xl md:text-7xl">
               <span className="text-white">Pizza </span>
               <span className="text-white">Spartaco</span>
             </h1>
-            <h2 className="mt-3 sm:mt-4 text-left text-xl sm:text-2xl md:text-4xl font-bold text-white">
+            <h2 className="mt-3 sm:mt-4 text-left text-lg sm:text-xl md:text-3xl font-bold text-white">
               La vera pizza <span className="text-white">Romana</span>
             </h2>
             <div className="mt-5 sm:mt-7 flex items-center gap-5 sm:gap-7">
               <button
                 type="button"
                 onClick={() => onNavigate('menu')}
-                className="px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 bg-orange-500 hover:bg-orange-600 text-white text-base sm:text-lg font-extrabold rounded-lg shadow-2xl transition-colors"
+                className="px-5 sm:px-7 md:px-9 py-2.5 sm:py-3.5 md:py-5 bg-orange-500 hover:bg-orange-600 text-white text-sm sm:text-base font-extrabold rounded-lg shadow-2xl transition-colors"
               >
                 Menu
               </button>
-              <div className="flex items-center gap-3 text-white/90 text-base sm:text-lg">
+              <div className="flex items-center gap-3 text-white/90 text-sm sm:text-base">
                 <span className="font-semibold text-white">Google</span>
                 <div className="flex items-center gap-1" aria-label="Valutazione 4,4 su 5">
-                  <Star className="w-4 h-4 md:w-5 md:h-5 fill-yellow-400 text-yellow-400" />
-                  <Star className="w-4 h-4 md:w-5 md:h-5 fill-yellow-400 text-yellow-400" />
-                  <Star className="w-4 h-4 md:w-5 md:h-5 fill-yellow-400 text-yellow-400" />
-                  <Star className="w-4 h-4 md:w-5 md:h-5 fill-yellow-400 text-yellow-400" />
-                  <Star className="w-4 h-4 md:w-5 md:h-5 fill-yellow-400 text-yellow-400" />
+                  <Star className="w-3 h-3 md:w-4 md:h-4 fill-yellow-400 text-yellow-400" />
+                  <Star className="w-3 h-3 md:w-4 md:h-4 fill-yellow-400 text-yellow-400" />
+                  <Star className="w-3 h-3 md:w-4 md:h-4 fill-yellow-400 text-yellow-400" />
+                  <Star className="w-3 h-3 md:w-4 md:h-4 fill-yellow-400 text-yellow-400" />
+                  <Star className="w-3 h-3 md:w-4 md:h-4 fill-yellow-400 text-yellow-400" />
                 </div>
                 <span className="text-white">4,4/5</span>
               </div>
             </div>
             <div className="mt-3">
-              <p className="text-white/90 text-base sm:text-lg">Viale Spartaco, 73, 00174 Roma RM</p>
+              <p className="text-white/90 text-sm sm:text-base">Viale Spartaco, 73, 00174 Roma RM</p>
             </div>
           </div>
         </section>
