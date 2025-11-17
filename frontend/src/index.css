@@ -210,12 +210,17 @@
       box-shadow: none; /* rimuovi ombra card */
     }
     .menu-card .image_container {
-      width: 38%;
+      width: 34%; /* immagine leggermente più stretta */
+      flex: 0 0 34%; /* mantiene larghezza fissa, non si espande */
       height: 9rem; /* altezza costante per card mobile */
     }
     .menu-card .title {
       font-size: 0.95rem;
       color: #ffffff; /* titoli in bianco */
+      white-space: normal; /* consenti a capo */
+      overflow-wrap: anywhere; /* spezza parole troppo lunghe */
+      word-break: break-word; /* evita overflow su parole lunghe */
+      text-overflow: clip; /* rimuove ellissi per permettere il wrap */
     }
     .menu-card .size {
       font-size: 0.8rem;
@@ -223,6 +228,7 @@
     }
     .menu-card .content {
       flex: 1;
+      min-width: 0; /* evita che il testo allarghi il lato destro */
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
