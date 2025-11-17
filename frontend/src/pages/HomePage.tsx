@@ -289,7 +289,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       else setVisibleCount(1);
 
       // Larghezza card responsive: più piccola su mobile
-      if (w < 768) setCardWidth(240);
+      if (w < 768) setCardWidth(200);
       else if (w < 1024) setCardWidth(260);
       else setCardWidth(280);
     };
@@ -492,9 +492,9 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
             </h2>
           </div>
 
-          <div className={`relative px-6 md:px-8 lg:px-12 transform transition-all duration-700 ease-out ${menuCarouselReveal ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={menuCarouselReveal ? { transitionDelay: '150ms' } : undefined}>
+          <div className={`relative px-4 md:px-8 lg:px-12 transform transition-all duration-700 ease-out ${menuCarouselReveal ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={menuCarouselReveal ? { transitionDelay: '150ms' } : undefined}>
             <div className="overflow-x-auto lg:overflow-hidden">
-              <div className="flex gap-6 transition-transform duration-300 ease-out" style={isDesktop ? { transform: `translateX(-${offset}px)` } : undefined}>
+              <div className="flex gap-4 md:gap-6 transition-transform duration-300 ease-out" style={isDesktop ? { transform: `translateX(-${offset}px)` } : undefined}>
                 {carouselProducts.map((product, idx) => (
                   <div key={`${product.id}-${idx}`} className="flex-shrink-0" style={{ width: cardWidth }}>
                     <ProductCard
@@ -763,20 +763,20 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
               href="https://www.google.com/search?sca_esv=254941356981cfe9&rlz=1C1FHFK_enIT1120IT1120&sxsrf=AE3TifMdxV3gRKNeCqVMs6NfFtNNI52ZoA:1761406521338&si=AMgyJEtREmoPL4P1I5IDCfuA8gybfVI2d5Uj7QMwYCZHKDZ-E90NQKo2ZlxRoKUaJ8tl5B38i8e3SS-f9mtJksGdBInT_kjUJlW00y22zZHNoylnMV6Mr9xh9QdMSCuoYPvmIuPDLlfzYvfyY2dJ9t8LLqHvcdy1AA%3D%3D&q=Pizza+Spartaco+Recensioni&sa=X&ved=2ahUKEwj_s4nQ1r-QAxXQhv0HHaF1IjEQ0bkNegQINhAE&biw=1536&bih=695&dpr=1.25"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center px-5 py-3 rounded-lg bg-white text-neutral-black border border-yellow-400 font-semibold shadow-soft hover:bg-neutral-gray-50 transition-colors"
+              className="inline-flex items-center px-4 py-2.5 md:px-5 md:py-3 rounded-lg bg-white text-neutral-black border border-yellow-400 font-semibold shadow-soft hover:bg-neutral-gray-50 transition-colors text-sm md:text-base"
               aria-label="Apri tutte le recensioni su Google"
             >
               Tutte le recensioni
             </a>
-            <div className="flex items-center gap-2 text-white">
-              <span className="font-semibold">Google</span>
+            <div className="flex items-center gap-1 md:gap-2 text-white text-sm md:text-base">
+              <span className="font-semibold text-sm md:text-base">Google</span>
               <span>4.4/5</span>
               <div className="flex items-center gap-1">
-                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                <Star className="w-4 h-4 md:w-5 md:h-5 fill-yellow-400 text-yellow-400" />
+                <Star className="w-4 h-4 md:w-5 md:h-5 fill-yellow-400 text-yellow-400" />
+                <Star className="w-4 h-4 md:w-5 md:h-5 fill-yellow-400 text-yellow-400" />
+                <Star className="w-4 h-4 md:w-5 md:h-5 fill-yellow-400 text-yellow-400" />
+                <Star className="w-4 h-4 md:w-5 md:h-5 fill-yellow-400 text-yellow-400" />
               </div>
             </div>
           </div>
