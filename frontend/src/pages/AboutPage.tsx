@@ -128,7 +128,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
   return (
     <div>
       {/* Hero isolata in un contenitore dedicato */}
-      <section className="relative isolate min-h-[85vh] overflow-hidden">
+      <section className="relative isolate min-h-[65vh] md:min-h-[85vh] overflow-hidden">
         <div
           className="absolute left-0 right-0 z-0"
           style={{
@@ -147,7 +147,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
           }}
         />
     
-        <div className="relative z-10 h-[85vh] flex items-center justify-center text-center">
+        <div className="relative z-10 h-[65vh] md:h-[85vh] flex items-center justify-center text-center">
           <h1
             ref={titleRef}
             className="text-5xl md:text-6xl lg:text-7xl font-bold text-white will-change-transform will-change-opacity"
