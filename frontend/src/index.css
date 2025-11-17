@@ -199,25 +199,56 @@
   /* Responsive adjustments for menu cards on mobile */
   @media (max-width: 640px) {
     .menu-card {
-      width: 80%; /* card leggermente più stretta su mobile */
-      margin-left: auto;
-      margin-right: auto;
+      width: 100%; /* piena larghezza dispositivo */
+      margin-left: 0;
+      margin-right: 0;
       padding: 0.75rem;
       gap: 0.5rem;
+      flex-direction: row; /* immagine a sinistra, contenuto a destra */
+      align-items: stretch;
+      background-color: transparent; /* rimuovi sfondo */
+      box-shadow: none; /* rimuovi ombra card */
     }
     .menu-card .image_container {
-      height: 10rem; /* immagine leggermente più alta su mobile */
+      width: 38%;
+      height: 9rem; /* altezza costante per card mobile */
     }
     .menu-card .title {
       font-size: 0.95rem;
+      color: #ffffff; /* titoli in bianco */
     }
     .menu-card .size {
       font-size: 0.8rem;
+      color: rgba(255,255,255,0.85); /* descrizioni/testi in bianco */
     }
-    .menu-card .cart-button {
-      font-size: 0.8rem;
-      padding: 0.45rem;
-      width: 72%; /* riduci larghezza su mobile */
+    .menu-card .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .menu-card .title-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+    .menu-card .price-top {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ffffff; /* prezzo in bianco */
+    }
+    /* sezione azione nascosta su mobile (gestita anche via JSX) */
+    .menu-card .action {
+      gap: 0.75rem;
+    }
+    .menu-card .price {
+      color: #ffffff; /* prezzo action in bianco (desktop hidden su mobile) */
+    }
+    .menu-card .list-size .item-list-button {
+      color: #ffffff; /* testi pulsanti misure in bianco */
+      background-color: transparent; /* trasparente su mobile */
+      border-color: rgba(255,255,255,0.6); /* bordo chiaro */
     }
   }
 
