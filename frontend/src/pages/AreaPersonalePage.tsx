@@ -113,10 +113,10 @@ const AreaPersonalePage: React.FC<AreaPersonalePageProps> = ({ userId, onNavigat
   const isAdmin = !!user?.is_admin;
 
   return (
-    <div className="min-h-[60vh] flex items-start justify-center p-6">
-      <div className="w-full md:max-w-4xl md:bg-black md:border md:border-neutral-gray-800 md:rounded-2xl md:shadow-soft px-4 md:p-6">
+    <div className="min-h-[60vh] flex items-start justify-center px-3 py-6 md:p-6">
+      <div className="w-full md:max-w-4xl md:bg-black md:border md:border-neutral-gray-800 md:rounded-2xl md:shadow-soft px-1 md:p-6">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-semibold text-white">Area Personale</h1>
+          <h1 className="text-xl md:text-2xl font-semibold text-white">Area Personale</h1>
         <div className="flex items-center gap-2">
           {user && isAdmin && (
             <button
@@ -170,7 +170,7 @@ const AreaPersonalePage: React.FC<AreaPersonalePageProps> = ({ userId, onNavigat
         {!loading && !error && user && (
           <div className="space-y-6">
             {/* Dati utente */}
-            <div className="rounded-xl bg-white text-black p-6">
+            <div className="rounded-xl bg-white text-black p-6 -mx-1 md:mx-0">
               <div className="mb-3">
                 <div className="text-sm text-neutral-gray-700">Nome</div>
                 <div className="text-lg font-medium">{user.first_name}</div>
@@ -186,7 +186,7 @@ const AreaPersonalePage: React.FC<AreaPersonalePageProps> = ({ userId, onNavigat
             </div>
 
             {/* Storico ordini */}
-            <div className="rounded-xl bg-white text-black p-6">
+            <div className="rounded-xl bg-white text-black p-6 -mx-1 md:mx-0">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <ShoppingBag className="w-5 h-5" /> Storico ordini
@@ -206,12 +206,43 @@ const AreaPersonalePage: React.FC<AreaPersonalePageProps> = ({ userId, onNavigat
                     const itemsCount = o.items?.reduce((sum: number, it: OrderItem) => sum + (it.quantity || 0), 0) || 0;
                     return (
                       <div key={o.id} className="py-3">
-                        {/* Riga preview */}
+                        {/* Riga preview (mobile e desktop separati) */}
                         <button
-                          className="w-full text-left flex items-center justify-between gap-4"
+                          className="w-full text-left flex items-start justify-between gap-4"
                           onClick={() => setExpanded((prev) => ({ ...prev, [o.id]: !prev[o.id] }))}
                         >
-                          <div className="flex flex-col md:flex-row md:items-center md:gap-6">
+                          {/* Mobile layout: elementi su righe separate, pagamento e prezzo sulla stessa riga */}
+                          <div className="md:hidden w-full">
+                            <div className="text-sm text-neutral-gray-700 flex items-center gap-2">
+                              <Clock className="w-4 h-4" />
+                              <span>{formatDateTime(o.created_at)}</span>
+                            </div>
+                            <div className="text-sm text-neutral-gray-700">Ordine: <span className="font-mono break-all">{o.id}</span></div>
+                            <div className="text-sm text-neutral-gray-700">Modalità: <span className="font-medium">{o.mode === 'delivery' ? 'Consegna' : 'Asporto'}</span></div>
+                            <div className="text-sm text-neutral-gray-700">Articoli: <span className="font-medium">{itemsCount}</span></div>
+                            <div className="flex items-center justify-between mt-1">
+                              <div className="text-sm text-neutral-gray-700 flex items-center gap-2">
+                                <CreditCard className="w-4 h-4" />
+                                <span>{o.payment_method ? o.payment_method : (o.mode === 'pickup' ? 'Pagamento al ritiro' : 'Pagamento alla consegna')}</span>
+                              </div>
+                              {o?.discount && Number(o.discount) > 0 ? (
+                                <div className="text-base font-semibold flex items-center gap-2">
+                                  <span className="line-through text-neutral-gray-500">{currency.format(Number(o.total || 0))}</span>
+                                  <span className="text-green-700">{currency.format(Number((o.total_paid ?? o.total) || 0))}</span>
+                                </div>
+                              ) : (
+                                <div className="text-base font-semibold">{currency.format(Number((o.total_paid ?? o.total) || 0))}</div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Icona chevron su mobile */}
+                          <div className="md:hidden flex items-center ml-2">
+                            {isOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                          </div>
+
+                          {/* Desktop layout: struttura originale */}
+                          <div className="hidden md:flex md:items-center md:gap-6">
                             <div className="text-sm text-neutral-gray-700 flex items-center gap-2">
                               <Clock className="w-4 h-4" />
                               <span>{formatDateTime(o.created_at)}</span>
@@ -224,7 +255,7 @@ const AreaPersonalePage: React.FC<AreaPersonalePageProps> = ({ userId, onNavigat
                               <span>{o.payment_method ? o.payment_method : (o.mode === 'pickup' ? 'Pagamento al ritiro' : 'Pagamento alla consegna')}</span>
                             </div>
                           </div>
-                          <div className="flex items-center gap-4">
+                          <div className="hidden md:flex items-center gap-4">
                             {o?.discount && Number(o.discount) > 0 ? (
                               <div className="text-base font-semibold flex items-center gap-2">
                                 <span className="line-through text-neutral-gray-500">{currency.format(Number(o.total || 0))}</span>
@@ -244,7 +275,7 @@ const AreaPersonalePage: React.FC<AreaPersonalePageProps> = ({ userId, onNavigat
                           }`}
                           aria-hidden={!isOpen}
                         >
-                          <div className="bg-neutral-gray-100 rounded-lg p-4">
+                          <div className="bg-neutral-gray-100 rounded-lg p-4 -mx-2 md:mx-0">
                             <div className="grid md:grid-cols-3 gap-4">
                               {/* Riepilogo logistica */}
                               <div className="space-y-1 text-sm">
