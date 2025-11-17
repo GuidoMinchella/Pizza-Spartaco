@@ -29,9 +29,10 @@ const LoginRegisterPage: React.FC = () => {
       style={{ backgroundColor: 'rgba(128, 128, 128, 0.5)' }}
       aria-modal="true"
       role="dialog"
+      onClick={() => { try { if (window.history.length > 1) window.history.back(); else window.location.href = '/'; } catch {} }}
     >
-      <div className="w-full max-w-md mx-4" onClick={(e) => e.stopPropagation()}>
-        <LoginForm onSubmit={loginUser} errorMessage={errorMessage || undefined} />
+      <div className="w-full max-w-md mx-2 sm:mx-4" onClick={(e) => e.stopPropagation()}>
+        <LoginForm onSubmit={loginUser} errorMessage={errorMessage || undefined} onClose={() => { try { if (window.history.length > 1) window.history.back(); else window.location.href = '/'; } catch {} }} />
       </div>
     </div>
   )
