@@ -92,6 +92,12 @@
     box-shadow: 0 6px 16px rgba(0,0,0,0.08);
   }
 
+  /* Card senza immagine (desktop) */
+  .menu-card.no-image {
+    /* mantiene layout a colonna, rimuove gap extra della sezione immagine */
+    gap: 0.75rem; /* già definito, lo manteniamo esplicito */
+  }
+
   .menu-card .image_container {
     overflow: hidden;
     cursor: pointer;
@@ -208,6 +214,17 @@
       align-items: stretch;
       background-color: transparent; /* rimuovi sfondo */
       box-shadow: none; /* rimuovi ombra card */
+    }
+    /* Card senza immagine: contenuto si estende sull'intera larghezza */
+    .menu-card.no-image {
+      flex-direction: column; /* senza immagine, layout verticale */
+      background-color: transparent;
+      box-shadow: none;
+      gap: 0.5rem;
+    }
+    .menu-card.no-image .content {
+      flex: 1;
+      min-width: 0;
     }
     .menu-card .image_container {
       width: 34%; /* immagine leggermente più stretta */
