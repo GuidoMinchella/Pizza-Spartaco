@@ -810,11 +810,13 @@ const CartPage: React.FC<CartPageProps> = ({ onNavigate, onOpenRegisterModal, is
                 <div className="space-y-3">
                   {items.map((item, idx) => (
                     <div key={idx} className="flex items-start gap-3">
-                      <img
-                        src={item.product.image}
-                        alt={item.product.name}
-                        className="w-16 h-16 rounded-md object-cover flex-shrink-0"
-                      />
+                      {typeof item.product.image === 'string' && item.product.image.trim() !== '' && (
+                        <img
+                          src={item.product.image}
+                          alt={item.product.name}
+                          className="w-16 h-16 rounded-md object-cover flex-shrink-0"
+                        />
+                      )}
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-center">
                           <div className="text-neutral-black font-medium truncate">
@@ -1619,9 +1621,10 @@ const CartPage: React.FC<CartPageProps> = ({ onNavigate, onOpenRegisterModal, is
                           ? 'border-primary-orange bg-primary-orange/5 text-primary-orange'
                           : 'border-neutral-gray-300 hover:border-neutral-gray-400 text-neutral-black'
                       }`}
+                      disabled
                       onClick={() => { setPaymentMethod('online'); }}
                     >
-                      Paga ora Online
+                       termporaneomente fuori servizio
                       <img
                         src="/carta.svg"
                         alt="Pagamento online con carta"
@@ -1686,11 +1689,13 @@ const CartPage: React.FC<CartPageProps> = ({ onNavigate, onOpenRegisterModal, is
                       ) : (
                         items.map((item, idx) => (
                           <div key={idx} className="flex items-start gap-3">
-                            <img
-                              src={item.product.image}
-                              alt={item.product.name}
-                              className="w-16 h-16 rounded-md object-cover flex-shrink-0"
-                            />
+                            {typeof item.product.image === 'string' && item.product.image.trim() !== '' && (
+                              <img
+                                src={item.product.image}
+                                alt={item.product.name}
+                                className="w-16 h-16 rounded-md object-cover flex-shrink-0"
+                              />
+                            )}
                             <div className="flex-1 min-w-0">
                               <div className="flex justify-between items-center">
                                 <div className="text-neutral-black font-medium truncate">
