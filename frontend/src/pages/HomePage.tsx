@@ -302,7 +302,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   const isDesktop = visibleCount >= 3;
 
   // Immagine hero: desktop vs mobile
-  const heroBgUrl = isDesktop ? "/galleria/herohomepc.jpeg" : "/galleria/herohomemobile.jpeg";
+  const heroBgUrl = isDesktop ? "hero.jpeg" : "hero.jpeg";
 
   // Recensioni (20 card)
   const reviews = [
@@ -547,9 +547,9 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         <section className="bg-neutral-black mt-24 md:mt-32 mb-12 md:mb-16">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-0">
             {[
-              '/sezionefotohome/img1.jpeg',
+              '/sezionefotohome/img6.jpeg',
               '/sezionefotohome/img3.webp',
-              '/sezionefotohome/img2.jpeg',
+              '/sezionefotohome/img4.jpeg',
               '/sezionefotohome/img3.jpg',
               '/sezionefotohome/img3.jpeg',
               '/sezionefotohome/img1.webp',
