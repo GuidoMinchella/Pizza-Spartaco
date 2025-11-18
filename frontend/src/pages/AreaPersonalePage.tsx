@@ -123,7 +123,7 @@ const AreaPersonalePage: React.FC<AreaPersonalePageProps> = ({ userId, onNavigat
               className="px-3 py-2 rounded-lg bg-primary-orange text-white hover:opacity-90"
               onClick={() => onNavigate('admin')}
             >
-              Pannello Admin
+              Admin
             </button>
           )}
           {user && (
