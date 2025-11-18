@@ -269,7 +269,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, onNavigateLogin, 
         <div className="container" style={{ position: 'relative' }}>
           <button
             type="button"
-            aria-label="Indietro"
+            aria-label=""
             onClick={() => setStep('form')}
             style={{
               position: 'absolute',
