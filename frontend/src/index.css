@@ -157,19 +157,19 @@
     transition: all 0.3s ease-in-out;
   }
 
-  .menu-card .item-list-button:hover { border: 2px solid rgba(255, 115, 0, 0.5); }
+  .menu-card .item-list-button:hover { border: 2px solid #9ca3af; /* grigio 400 */ }
   .menu-card .item-list-button:focus {
-    background-image: var(--bg-linear);
-    color: #ffffff;
-    border: 2px solid rgba(255, 115, 0, 0.5);
-    box-shadow: inset 0px 1px 4px rgba(167, 75, 0, 0.35);
+    background-color: #d1d5db; /* grigio 300 */
+    color: #18181b;            /* testo scuro */
+    border: 2px solid #9ca3af; /* grigio 400 */
+    box-shadow: inset 0px 1px 4px rgba(0, 0, 0, 0.08);
   }
   /* Active state for selected size */
   .menu-card .item-list-button-active {
-    background-image: var(--bg-linear);
-    color: #ffffff;
-    border: 2px solid rgba(255, 115, 0, 0.5);
-    box-shadow: inset 0px 1px 4px rgba(167, 75, 0, 0.35);
+    background-color: #d1d5db; /* grigio 300 */
+    color: #18181b;            /* testo scuro */
+    border: 2px solid #9ca3af; /* grigio 400 */
+    box-shadow: inset 0px 1px 4px rgba(0, 0, 0, 0.08);
   }
 
   .menu-card .action {
@@ -273,6 +273,12 @@
       color: #ffffff; /* testi pulsanti misure in bianco */
       background-color: transparent; /* trasparente su mobile */
       border-color: rgba(255,255,255,0.6); /* bordo chiaro */
+    }
+    /* Mobile: evidenzia in grigio il pulsante selezionato (override della regola base trasparente) */
+    .menu-card .list-size .item-list-button.item-list-button-active {
+      background-color: #d1d5db; /* grigio 300 */
+      color: #18181b;            /* testo scuro */
+      border-color: #9ca3af;     /* grigio 400 */
     }
   }
 
