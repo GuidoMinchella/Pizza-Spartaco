@@ -487,7 +487,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           {[
             { src: '/galleriahome/1.webp', title: 'Impasti artigianali', description: 'Lavorati a mano ogni giorno con cura e passione, i nostri impasti garantiscono leggerezza, fragranza e un gusto autentico.' },
             { src: '/galleria/ingredienti.jpeg', title: 'Ingredienti selezionati', description: 'Solo materie prime di alta qualità, scelte con attenzione per offrire sapori genuini e un’esperienza unica ad ogni morso.' },
-            { src: '/galleriahome/3.webp', title: 'Cottura perfetta', description: 'Cotte al punto giusto per una crosta croccante e un cuore morbido, le nostre pizze raggiungono l’equilibrio ideale tra gusto e consistenza.' },
+            { src: '/imggg.jpeg', title: 'Cottura perfetta', description: 'Cotte al punto giusto per una crosta croccante e un cuore morbido, le nostre pizze raggiungono l’equilibrio ideale tra gusto e consistenza.' },
             { src: '/galleriahome/4.webp', title: 'Tradizione romana', description: 'Rispettiamo le ricette e le tecniche della vera scuola romana, portando in tavola tutto il sapore della nostra storia culinaria.' },
           ].map((item, i) => (
             <div
@@ -576,7 +576,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
               '/sezionefotohome/img6.jpeg',
               '/sezionefotohome/img3.webp',
               '/sezionefotohome/img4.jpeg',
-              '/sezionefotohome/img3.jpg',
+              '/sezionefotohome/imgg.jpeg',
               '/sezionefotohome/img3.jpeg',
               '/sezionefotohome/img1.webp',
             ].map((src, i) => (
