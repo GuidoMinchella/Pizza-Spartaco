@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Plus, Flame, Leaf, Sparkles, TrendingUp, ShoppingCart } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Plus, Flame, Leaf, Sparkles, TrendingUp, ShoppingCart, X } from 'lucide-react';
 import { Product, CartItem, ProductExtra } from '../types';
 import { useCart } from '../context/CartContext';
 
@@ -16,10 +16,39 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, showFullDetails = false, sizeLabels = { slice: 'Pinsa', half: 'Tonda', full: 'Pala' }, sizeActiveColor = 'orange', compact = false, hideDescription = false, insetImage = false, variant = 'default' }) => {
   const { addItem } = useCart();
-  const [selectedSize, setSelectedSize] = useState<'slice' | 'half' | 'full'>('slice');
+  // Disponibilità prezzi per le dimensioni
+  const canSlice = (product.pricePerSlice ?? 0) > 0;
+  const canHalf = (product.priceHalfTray ?? 0) > 0;
+  const canFull = (product.priceFullTray ?? 0) > 0;
+  const defaultSize: 'slice' | 'half' | 'full' = canSlice ? 'slice' : canHalf ? 'half' : 'full';
+  const [selectedSize, setSelectedSize] = useState<'slice' | 'half' | 'full'>(defaultSize);
   const [quantity, setQuantity] = useState(1);
   const [selectedExtras, setSelectedExtras] = useState<ProductExtra[]>([]);
   const [showToast, setShowToast] = useState(false);
+  const [isImageOpen, setIsImageOpen] = useState(false);
+  const [zoomSrc, setZoomSrc] = useState<string | undefined>(undefined);
+
+  const openImage = () => {
+    if (!product.image) return;
+    setZoomSrc(product.image);
+    setIsImageOpen(true);
+  };
+  const closeImage = () => {
+    setIsImageOpen(false);
+    setZoomSrc(undefined);
+  };
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeImage();
+    };
+    if (isImageOpen) {
+      document.addEventListener('keydown', onKey);
+    }
+    return () => document.removeEventListener('keydown', onKey);
+  }, [isImageOpen]);
+
+  const availableSizesCount = (canSlice ? 1 : 0) + (canHalf ? 1 : 0) + (canFull ? 1 : 0);
+  const shouldShowSizes = product.category !== 'bevande' && availableSizesCount > 1;
 
   const getPrice = () => {
     // Se la tipologia non è disponibile (bevande o nessuna misura attiva), usa il primo prezzo disponibile
@@ -35,9 +64,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showFullDetails = fa
         return product.priceFullTray;
     }
   };
-  const canSlice = (product.pricePerSlice ?? 0) > 0;
-  const canHalf = (product.priceHalfTray ?? 0) > 0;
-  const canFull = (product.priceFullTray ?? 0) > 0;
 
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     // Se la tipologia non è mostrata nella card (bevande o nessuna misura disponibile), salva size vuoto
@@ -127,16 +153,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showFullDetails = fa
 
   const activeSizeClasses = sizeActiveColor === 'black'
     ? 'bg-neutral-black text-white border-neutral-black'
-    : 'bg-primary-orange text-white border-primary-orange';
+    : 'bg-neutral-gray-300 text-neutral-black border-neutral-gray-400';
   
   // Variante stile "menu" basata sul CSS fornito (scoped su .menu-card)
   if (variant === 'menu') {
     const noImage = !product.image;
     return (
+      <>
       <div className={`menu-card ${noImage ? 'no-image' : ''}`}>
         {product.image ? (
           <div className="image_container">
-            <img src={product.image} alt={product.name} className="image" loading="lazy" />
+            <img src={product.image} alt={product.name} className="image cursor-zoom-in" loading="lazy" onClick={openImage} />
           </div>
         ) : null}
         <div className="content">
@@ -161,7 +188,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showFullDetails = fa
             </div>
           )}
 
-          {product.category !== 'bevande' && (
+          {shouldShowSizes && (
             <div className="size">
               <span>Dimensione</span>
               <ul className="list-size">
@@ -193,8 +220,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showFullDetails = fa
             </div>
           )}
 
-          {/* Selettore quantità su mobile; rimosso pulsante rapido "+" */}
-          <div className="flex items-center gap-2">
+          {/* Selettore quantità: aggiunto margine superiore su desktop per distanziarlo dalle dimensioni */}
+          <div className="flex items-center gap-2 md:mt-6">
             <div className="flex items-center bg-[#18181b] text-white border border-[#18181b] rounded-lg">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -215,7 +242,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showFullDetails = fa
           </div>
 
           {/* Pulsante carrello visibile su mobile e desktop; prezzo desktop nella sezione action */}
-          <div className="action">
+          <div className="action md:mt-6">
             <div className="price hidden sm:block"><span>€{(getPrice() * quantity).toFixed(2)}</span></div>
             <button className="cart-button flex" onClick={handleAddToCart}>
               <span>Aggiungi al carrello</span>
@@ -231,15 +258,29 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showFullDetails = fa
           </div>
         )}
       </div>
+
+      {isImageOpen && (
+        <div className="fixed inset-0 z-[70] bg-black/70 backdrop-blur-sm flex items-center justify-center" onClick={closeImage}>
+          <div className="relative max-w-[92vw] max-h-[82vh]" onClick={(e) => e.stopPropagation()}>
+            <img src={zoomSrc} alt={product.name} className="w-auto h-auto max-w-[92vw] max-h-[82vh] object-contain rounded-xl shadow-soft transition-transform duration-300 ease-out" />
+            <button type="button" className="absolute top-2 right-2 p-2 rounded-lg bg-neutral-gray-200 hover:bg-neutral-gray-300 shadow-soft" onClick={closeImage} aria-label="Chiudi immagine">
+              <X className="w-4 h-4 text-neutral-black" />
+            </button>
+          </div>
+        </div>
+      )}
+      </>
     );
   }
   return (
+    <>
     <div className="card group hover:shadow-soft-lg transition-all duration-300">
       <div className={insetImage ? "relative overflow-hidden bg-white pt-4 px-4 pb-0 rounded-t-2xl" : "relative overflow-hidden"}>
         <img
           src={product.image}
           alt={product.name}
-          className={`w-full ${insetImage ? (compact ? 'h-24' : 'h-36') : (compact ? 'h-36' : 'h-48')} object-cover group-hover:scale-105 transition-transform duration-500 ${insetImage ? 'rounded-t-2xl' : ''}`}
+          className={`w-full ${insetImage ? (compact ? 'h-24' : 'h-36') : (compact ? 'h-36' : 'h-48')} object-cover group-hover:scale-105 transition-transform duration-500 ${insetImage ? 'rounded-t-2xl' : ''} cursor-zoom-in`}
+          onClick={openImage}
           loading="lazy"
         />
 
@@ -262,9 +303,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showFullDetails = fa
           </div>
         )}
 
-        {product.category !== 'bevande' && (
-          <div className="mb-4">
-            <div className="flex gap-2">
+        {shouldShowSizes && (
+          <div className="mb-4 md:mb-6">
+            <div className="flex gap-2 md:gap-3">
               <button
                 onClick={() => canSlice && setSelectedSize('slice')}
                 className={`flex-1 py-2 px-3 text-sm font-medium rounded-lg border transition-all ${
@@ -300,7 +341,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showFullDetails = fa
         )}
 
 
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 md:mb-6">
           <span className="text-2xl font-bold text-neutral-black">
             €{(getPrice() * quantity).toFixed(2)}
           </span>
@@ -325,7 +366,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showFullDetails = fa
 
         <button
           onClick={handleAddToCart}
-          className="w-full flex items-center justify-center space-x-2 bg-neutral-black text-white rounded-lg py-3 hover:bg-neutral-black/90 transition-colors"
+          className="w-full flex items-center justify-center space-x-2 bg-neutral-black text-white rounded-lg py-3 hover:bg-neutral-black/90 transition-colors mt-2 md:mt-4"
         >
           <Plus className="w-5 h-5" />
           <span>Aggiungi al carrello</span>
@@ -340,6 +381,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showFullDetails = fa
         </div>
       )}
     </div>
+
+    {isImageOpen && (
+      <div className="fixed inset-0 z-[70] bg-black/70 backdrop-blur-sm flex items-center justify-center" onClick={closeImage}>
+        <div className="relative max-w-[92vw] max-h-[82vh]" onClick={(e) => e.stopPropagation()}>
+          <img src={zoomSrc} alt={product.name} className="w-auto h-auto max-w-[92vw] max-h-[82vh] object-contain rounded-xl shadow-soft transition-transform duration-300 ease-out" />
+          <button type="button" className="absolute top-2 right-2 p-2 rounded-lg bg-neutral-gray-200 hover:bg-neutral-gray-300 shadow-soft" onClick={closeImage} aria-label="Chiudi immagine">
+            <X className="w-4 h-4 text-neutral-black" />
+          </button>
+        </div>
+      </div>
+    )}
+    </>
   );
 };
 
