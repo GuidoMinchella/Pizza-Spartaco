@@ -339,7 +339,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
   }
 
   return (
-    <div className="min-h-[60vh] flex items-start justify-center p-6">
+    <div className="min-h-[60vh] flex items-start justify-center px-2 py-6 md:px-6">
         <div className="w-full max-w-6xl md:bg-black md:border md:border-neutral-gray-800 md:rounded-2xl md:shadow-soft md:p-6 p-2">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl md:text-3xl font-semibold text-white flex items-center gap-3">
@@ -383,8 +383,8 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
               aria-pressed={activeTab === 'orders'}
             >
               <ShoppingBag className="w-7 h-7" />
-              <div className="text-sm leading-tight whitespace-nowrap">Ordini</div>
-              <div className="text-base font-semibold">{orders.length}</div>
+              <div className="text-xs leading-tight whitespace-nowrap">Ordini</div>
+              <div className="text-sm font-semibold">{orders.length}</div>
             </button>
             <button
               type="button"
@@ -393,8 +393,8 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
               aria-pressed={activeTab === 'users'}
             >
               <Users className="w-7 h-7" />
-              <div className="text-sm leading-tight whitespace-nowrap">Utenti</div>
-              <div className="text-base font-semibold">{users.length}</div>
+              <div className="text-xs leading-tight whitespace-nowrap">Utenti</div>
+              <div className="text-sm font-semibold">{users.length}</div>
             </button>
             <button
               type="button"
@@ -403,8 +403,8 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
               aria-pressed={activeTab === 'dishes'}
             >
               <Utensils className="w-7 h-7" />
-              <div className="text-sm leading-tight whitespace-nowrap">Piatti</div>
-              <div className="text-base font-semibold">{dishes.length}</div>
+              <div className="text-xs leading-tight whitespace-nowrap">Piatti</div>
+              <div className="text-sm font-semibold">{dishes.length}</div>
             </button>
             <button
               type="button"
@@ -413,8 +413,8 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
               aria-pressed={activeTab === 'stats'}
             >
               <BarChart2 className="w-7 h-7" />
-              <div className="text-sm leading-tight whitespace-nowrap">Statistiche</div>
-              <div className="text-base font-semibold">{currency.format(revenueToday)}</div>
+              <div className="text-xs leading-tight whitespace-nowrap">Statistiche</div>
+              <div className="text-sm font-semibold">{currency.format(revenueToday)}</div>
             </button>
           </div>
         </div>
@@ -483,17 +483,17 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
                   {todayOrders.map((o) => {
                     const isOpen = !!expanded[o.id];
                     return (
-                      <div key={o.id} className="p-4">
+                      <div key={o.id} className="p-4 overflow-hidden break-words">
                         {/* Preview cliccabile */}
                         <button
                           type="button"
-                          className="w-full flex items-start justify-between gap-4 text-left"
+                          className="w-full flex items-start justify-between gap-4 text-left break-words relative"
                           onClick={() => setExpanded((prev) => ({ ...prev, [o.id]: !prev[o.id] }))}
                           aria-expanded={isOpen}
                         >
                           <div className="flex flex-col gap-1">
                             {/* Giorno + Orario di consegna/ritiro */}
-                            <div className="flex items-center gap-2 text-sm text-neutral-gray-800">
+                            <div className="flex items-center gap-2 text-xs md:text-sm text-neutral-gray-800">
                               <Clock className="w-4 h-4" />
                               <span className="font-semibold">{formatDate(o.created_at)}</span>
                               <span className="font-semibold">{o.mode === 'delivery' ? 'Orario di consegna:' : 'Orario di ritiro:'}</span>
@@ -505,12 +505,12 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
                               <span className="font-mono whitespace-nowrap">{o.id}</span>
                             </div>
                             {/* Domicilio/Asporto con icona */}
-                            <div className="flex items-center gap-2 text-sm text-neutral-gray-800">
+                            <div className="flex items-center gap-2 text-xs md:text-sm text-neutral-gray-800">
                               {o.mode === 'delivery' ? <Truck className="w-4 h-4" /> : <Package className="w-4 h-4" />}
                               <span className="font-semibold">{o.mode === 'delivery' ? 'Domicilio' : 'Asporto'}</span>
                             </div>
                             {/* Metodo di pagamento con icona dal checkout */}
-                            <div className="flex items-center gap-2 text-sm text-neutral-gray-800">
+                            <div className="flex items-center gap-2 text-xs md:text-sm text-neutral-gray-800">
                               {o.payment_method === 'online' ? (
                                 <img src="/carta.svg" alt="Pagamento online con carta" className="w-5 h-5" />
                               ) : o.payment_method === 'cash' ? (
@@ -532,9 +532,11 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
                             </div>
                           </div>
                           <div className="flex items-center gap-3">
-                            <div className="text-base font-semibold">{currency.format(Number((o.total_paid ?? o.total) || 0))}</div>
-                            {isOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                            <div className="text-sm md:text-base font-semibold">{currency.format(Number((o.total_paid ?? o.total) || 0))}</div>
+                            {isOpen ? <ChevronUp className="w-5 h-5 hidden md:block" /> : <ChevronDown className="w-5 h-5 hidden md:block" />}
                           </div>
+                          {/* Chevron mobile in basso a destra (uguale al PC) */}
+                          <ChevronDown className={`md:hidden absolute bottom-2 right-2 w-5 h-5 text-neutral-gray-700 transition-transform duration-300 ${isOpen ? 'rotate-90' : 'rotate-0'}`} />
                         </button>
 
                         {/* Dettagli espansi */}
@@ -542,38 +544,38 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
                           className={`overflow-hidden transform-gpu origin-bottom transition-all duration-500 ease-in-out ${isOpen ? 'mt-3 opacity-100 translate-y-0 max-h-[70vh] pointer-events-auto' : 'mt-0 opacity-0 translate-y-2 max-h-0 pointer-events-none'}`}
                           aria-hidden={!isOpen}
                         >
-                          <div className="bg-neutral-gray-100 rounded-lg p-4">
+                          <div className="bg-neutral-gray-100 rounded-lg p-4 break-words">
                             <div className="grid md:grid-cols-3 gap-4">
                               {/* Dati cliente */}
                               <div>
-                                <h3 className="text-base font-semibold mb-2">Dati cliente</h3>
-                                <div className="text-sm"><span className="text-neutral-gray-700">Nome:</span> {o.user_first_name || '-'}</div>
-                                <div className="text-sm"><span className="text-neutral-gray-700">Cognome:</span> {o.user_last_name || '-'}</div>
-                                <div className="text-sm"><span className="text-neutral-gray-700">Telefono:</span> {o.phone || '-'}</div>
-                                <div className="text-sm"><span className="text-neutral-gray-700">Email:</span> {o.user_email || '-'}</div>
+                                <h3 className="text-sm md:text-base font-semibold mb-2">Dati cliente</h3>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Nome:</span> {o.user_first_name || '-'}</div>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Cognome:</span> {o.user_last_name || '-'}</div>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Telefono:</span> {o.phone || '-'}</div>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Email:</span> {o.user_email || '-'}</div>
                               </div>
 
                               {/* Dati Ordine */}
                               <div>
-                                <h3 className="text-base font-semibold mb-2">Dati Ordine</h3>
-                                <div className="text-sm"><span className="text-neutral-gray-700">ID</span> {o.id}</div>
-                                <div className="text-sm"><span className="text-neutral-gray-700">Via:</span> {o.address || '-'}</div>
-                                <div className="text-sm"><span className="text-neutral-gray-700">CAP:</span> {o.cap || '-'}</div>
-                                <div className="text-sm"><span className="text-neutral-gray-700">Scala:</span> {o.staircase || '-'}</div>
-                                <div className="text-sm"><span className="text-neutral-gray-700">Piano:</span> {o.floor || '-'}</div>
-                                <div className="text-sm"><span className="text-neutral-gray-700">Citofono:</span> {o.buzzer || '-'}</div>
-                                <div className="text-sm"><span className="text-neutral-gray-700">Orario di consegna/ritiro:</span> {(o.mode === 'delivery' ? o.delivery_time : o.pickup_time) || '-'}</div>
-                                <div className="text-sm"><span className="text-neutral-gray-700">Metodo di consegna:</span> {o.mode === 'delivery' ? 'Consegna' : 'Asporto'}</div>
-                              <div className="text-sm"><span className="text-neutral-gray-700">Metodo di pagamento:</span> {o.payment_method || (o.mode === 'pickup' ? 'Pagamento al ritiro' : 'Pagamento alla consegna')}</div>
+                                <h3 className="text-sm md:text-base font-semibold mb-2">Dati Ordine</h3>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">ID</span> {o.id}</div>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Via:</span> {o.address || '-'}</div>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">CAP:</span> {o.cap || '-'}</div>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Scala:</span> {o.staircase || '-'}</div>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Piano:</span> {o.floor || '-'}</div>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Citofono:</span> {o.buzzer || '-'}</div>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Orario di consegna/ritiro:</span> {(o.mode === 'delivery' ? o.delivery_time : o.pickup_time) || '-'}</div>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Metodo di consegna:</span> {o.mode === 'delivery' ? 'Consegna' : 'Asporto'}</div>
+                              <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Metodo di pagamento:</span> {o.payment_method || (o.mode === 'pickup' ? 'Pagamento al ritiro' : 'Pagamento alla consegna')}</div>
                               {o.notes_rider && (
-                                <div className="text-sm"><span className="text-neutral-gray-700">Note per il rider:</span> {o.notes_rider}</div>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Note per il rider:</span> {o.notes_rider}</div>
                               )}
                               </div>
 
                               {/* Dati prodotti */}
                               <div>
-                                <h3 className="text-base font-semibold mb-2">Dati prodotti</h3>
-                                <ul className="text-sm space-y-1">
+                                <h3 className="text-sm md:text-base font-semibold mb-2">Dati prodotti</h3>
+                                <ul className="text-xs md:text-sm space-y-1">
                                   {o.items && o.items.length > 0 ? (
                                     o.items.map((it, idx) => (
                                       <li key={`${o.id}-${idx}`} className="flex items-start justify-between gap-3">
@@ -598,7 +600,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
                               </div>
                             </div>
                             {/* Totali ordine */}
-                            <div className="mt-3 border-t pt-3 text-sm">
+                            <div className="mt-3 border-t pt-3 text-xs md:text-sm">
                               <div className="flex items-center justify-between"><span>Subtotale</span><span>{currency.format(Number(o.subtotal || 0))}</span></div>
                               {o.delivery_fee !== null && (
                                 <div className="flex items-center justify-between"><span>Consegna</span><span>{currency.format(Number(o.delivery_fee || 0))}</span></div>
@@ -606,8 +608,8 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
                               {o?.discount && Number(o.discount) > 0 && (
                                 <div className="flex items-center justify-between text-green-700"><span>Sconto</span><span>-{currency.format(Number(o.discount || 0))}</span></div>
                               )}
-                              <div className="flex items-center justify-between font-semibold text-base mt-1"><span>Totale</span><span>{currency.format(Number(o.total || 0))}</span></div>
-                              <div className="flex items-center justify-between font-semibold text-base mt-1"><span>Totale pagato</span><span>{currency.format(Number((o.total_paid ?? o.total) || 0))}</span></div>
+                              <div className="flex items-center justify-between font-semibold text-sm md:text-base mt-1"><span>Totale</span><span>{currency.format(Number(o.total || 0))}</span></div>
+                              <div className="flex items-center justify-between font-semibold text-sm md:text-base mt-1"><span>Totale pagato</span><span>{currency.format(Number((o.total_paid ?? o.total) || 0))}</span></div>
                             </div>
                           </div>
                         </div>
@@ -628,17 +630,17 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
                   {historyOrders.map((o) => {
                     const isOpen = !!expanded[o.id];
                     return (
-                      <div key={o.id} className="p-4">
+                      <div key={o.id} className="p-4 overflow-hidden break-words">
                         {/* Preview cliccabile */}
                         <button
                           type="button"
-                          className="w-full flex items-start justify-between gap-4 text-left"
+                          className="w-full flex items-start justify-between gap-4 text-left break-words relative"
                           onClick={() => setExpanded((prev) => ({ ...prev, [o.id]: !prev[o.id] }))}
                           aria-expanded={isOpen}
                         >
                           <div className="flex flex-col gap-1">
                             {/* Giorno + Orario di consegna/ritiro */}
-                            <div className="flex items-center gap-2 text-sm text-neutral-gray-800">
+                            <div className="flex items-center gap-2 text-xs md:text-sm text-neutral-gray-800">
                               <Clock className="w-4 h-4" />
                               <span className="font-semibold">{formatDate(o.created_at)}</span>
                               <span className="font-semibold">{o.mode === 'delivery' ? 'Orario di consegna:' : 'Orario di ritiro:'}</span>
@@ -650,12 +652,12 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
                               <span className="font-mono whitespace-nowrap">{o.id}</span>
                             </div>
                             {/* Domicilio/Asporto con icona */}
-                            <div className="flex items-center gap-2 text-sm text-neutral-gray-800">
+                            <div className="flex items-center gap-2 text-xs md:text-sm text-neutral-gray-800">
                               {o.mode === 'delivery' ? <Truck className="w-4 h-4" /> : <Package className="w-4 h-4" />}
                               <span className="font-semibold">{o.mode === 'delivery' ? 'Domicilio' : 'Asporto'}</span>
                             </div>
                             {/* Metodo di pagamento con icona dal checkout */}
-                            <div className="flex items-center gap-2 text-sm text-neutral-gray-800">
+                            <div className="flex items-center gap-2 text-xs md:text-sm text-neutral-gray-800">
                               {o.payment_method === 'online' ? (
                                 <img src="/carta.svg" alt="Pagamento online con carta" className="w-5 h-5" />
                               ) : o.payment_method === 'cash' ? (
@@ -677,9 +679,11 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
                             </div>
                           </div>
                           <div className="flex items-center gap-3">
-                            <div className="text-base font-semibold">{currency.format(Number((o.total_paid ?? o.total) || 0))}</div>
-                            {isOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                            <div className="text-sm md:text-base font-semibold">{currency.format(Number((o.total_paid ?? o.total) || 0))}</div>
+                            {isOpen ? <ChevronUp className="w-5 h-5 hidden md:block" /> : <ChevronDown className="w-5 h-5 hidden md:block" />}
                           </div>
+                          {/* Chevron mobile in basso a destra (uguale al PC) */}
+                          <ChevronDown className={`md:hidden absolute bottom-2 right-2 w-5 h-5 text-neutral-gray-700 transition-transform duration-300 ${isOpen ? 'rotate-90' : 'rotate-0'}`} />
                         </button>
 
                         {/* Dettagli espansi */}
@@ -687,37 +691,37 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
                           className={`overflow-hidden transform-gpu origin-bottom transition-all duration-500 ease-in-out ${isOpen ? 'mt-3 opacity-100 translate-y-0 max-h-[70vh] pointer-events-auto' : 'mt-0 opacity-0 translate-y-2 max-h-0 pointer-events-none'}`}
                           aria-hidden={!isOpen}
                         >
-                          <div className="bg-neutral-gray-100 rounded-lg p-4">
+                          <div className="bg-neutral-gray-100 rounded-lg p-4 break-words">
                             <div className="grid md:grid-cols-3 gap-4">
                               {/* Dati cliente */}
                               <div>
-                                <h3 className="text-base font-semibold mb-2">Dati cliente</h3>
-                                <div className="text-sm"><span className="text-neutral-gray-700">Nome:</span> {o.user_first_name || '-'}</div>
-                                <div className="text-sm"><span className="text-neutral-gray-700">Cognome:</span> {o.user_last_name || '-'}</div>
-                                <div className="text-sm"><span className="text-neutral-gray-700">Telefono:</span> {o.phone || '-'}</div>
-                                <div className="text-sm"><span className="text-neutral-gray-700">Email:</span> {o.user_email || '-'}</div>
+                                <h3 className="text-sm md:text-base font-semibold mb-2">Dati cliente</h3>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Nome:</span> {o.user_first_name || '-'}</div>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Cognome:</span> {o.user_last_name || '-'}</div>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Telefono:</span> {o.phone || '-'}</div>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Email:</span> {o.user_email || '-'}</div>
                               </div>
 
                               {/* Dati Ordine */}
                               <div>
-                                <h3 className="text-base font-semibold mb-2">Dati Ordine</h3>
-                                <div className="text-sm"><span className="text-neutral-gray-700">Via:</span> {o.address || '-'}</div>
-                                <div className="text-sm"><span className="text-neutral-gray-700">CAP:</span> {o.cap || '-'}</div>
-                                <div className="text-sm"><span className="text-neutral-gray-700">Scala:</span> {o.staircase || '-'}</div>
-                                <div className="text-sm"><span className="text-neutral-gray-700">Piano:</span> {o.floor || '-'}</div>
-                                <div className="text-sm"><span className="text-neutral-gray-700">Citofono:</span> {o.buzzer || '-'}</div>
-                                <div className="text-sm"><span className="text-neutral-gray-700">Orario di consegna/ritiro:</span> {(o.mode === 'delivery' ? o.delivery_time : o.pickup_time) || '-'}</div>
-                                <div className="text-sm"><span className="text-neutral-gray-700">Metodo di consegna:</span> {o.mode === 'delivery' ? 'Consegna' : 'Asporto'}</div>
-                              <div className="text-sm"><span className="text-neutral-gray-700">Metodo di pagamento:</span> {o.payment_method || (o.mode === 'pickup' ? 'Pagamento al ritiro' : 'Pagamento alla consegna')}</div>
+                                <h3 className="text-sm md:text-base font-semibold mb-2">Dati Ordine</h3>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Via:</span> {o.address || '-'}</div>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">CAP:</span> {o.cap || '-'}</div>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Scala:</span> {o.staircase || '-'}</div>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Piano:</span> {o.floor || '-'}</div>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Citofono:</span> {o.buzzer || '-'}</div>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Orario di consegna/ritiro:</span> {(o.mode === 'delivery' ? o.delivery_time : o.pickup_time) || '-'}</div>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Metodo di consegna:</span> {o.mode === 'delivery' ? 'Consegna' : 'Asporto'}</div>
+                              <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Metodo di pagamento:</span> {o.payment_method || (o.mode === 'pickup' ? 'Pagamento al ritiro' : 'Pagamento alla consegna')}</div>
                               {o.notes_rider && (
-                                <div className="text-sm"><span className="text-neutral-gray-700">Note per il rider:</span> {o.notes_rider}</div>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Note per il rider:</span> {o.notes_rider}</div>
                               )}
                               </div>
 
                               {/* Dati prodotti */}
                               <div>
-                                <h3 className="text-base font-semibold mb-2">Dati prodotti</h3>
-                                <ul className="text-sm space-y-1">
+                                <h3 className="text-sm md:text-base font-semibold mb-2">Dati prodotti</h3>
+                                <ul className="text-xs md:text-sm space-y-1">
                                   {o.items && o.items.length > 0 ? (
                                     o.items.map((it, idx) => (
                                       <li key={`${o.id}-${idx}`} className="flex items-start justify-between gap-3">
@@ -742,7 +746,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
                               </div>
                             </div>
                             {/* Totali ordine */}
-                            <div className="mt-3 border-t pt-3 text-sm">
+                            <div className="mt-3 border-t pt-3 text-xs md:text-sm">
                               <div className="flex items-center justify-between"><span>Subtotale</span><span>{currency.format(Number(o.subtotal || 0))}</span></div>
                               {o.delivery_fee !== null && (
                                 <div className="flex items-center justify-between"><span>Consegna</span><span>{currency.format(Number(o.delivery_fee || 0))}</span></div>
@@ -750,8 +754,8 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
                               {o?.discount && Number(o.discount) > 0 && (
                                 <div className="flex items-center justify-between text-green-700"><span>Sconto</span><span>-{currency.format(Number(o.discount || 0))}</span></div>
                               )}
-                              <div className="flex items-center justify-between font-semibold text-base mt-1"><span>Totale</span><span>{currency.format(Number(o.total || 0))}</span></div>
-                              <div className="flex items-center justify-between font-semibold text-base mt-1"><span>Totale pagato</span><span>{currency.format(Number((o.total_paid ?? o.total) || 0))}</span></div>
+                              <div className="flex items-center justify-between font-semibold text-sm md:text-base mt-1"><span>Totale</span><span>{currency.format(Number(o.total || 0))}</span></div>
+                              <div className="flex items-center justify-between font-semibold text-sm md:text-base mt-1"><span>Totale pagato</span><span>{currency.format(Number((o.total_paid ?? o.total) || 0))}</span></div>
                             </div>
                           </div>
                         </div>
@@ -782,16 +786,55 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {dishes.map((d) => (
-                  <div key={d.id} className="rounded-xl bg-white text-black p-4 border border-neutral-gray-200 shadow-soft">
+                  <div key={d.id} className="rounded-xl text-black p-4 border border-neutral-gray-200 shadow-soft">
+                    {/* Raffigurazione mobile come card del Menu */}
+                    <div className={`md:hidden menu-card ${!d.image ? 'no-image' : ''}`}>
+                      {d.image ? (
+                        <div className="image_container">
+                          <img src={d.image} alt={d.name} className="image" loading="lazy" />
+                        </div>
+                      ) : null}
+                      <div className="content">
+                        <div className="title-row">
+                          <div className="title"><span>{d.name}</span></div>
+                        </div>
+                        {d.description && (
+                          <div className="size"><span className="opacity-80">{d.description}</span></div>
+                        )}
+                    {Array.isArray(d.allergens) && d.allergens.length > 0 && (
+                      <div className="size">
+                        <span>Allergeni</span>
+                        <div className="flex flex-wrap items-center gap-2">
+                          {d.allergens.map((a) => (
+                            <img key={a} src={`/allergeni/${a}.png`} alt={a} className="w-5 h-5" />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {/* Azioni mobile sotto la descrizione */}
+                    <div className="mt-3 flex items-center gap-2 md:hidden">
+                      <button type="button" className="px-2 py-1 rounded-md bg-neutral-gray-200 hover:bg-neutral-gray-300 flex items-center gap-1" onClick={() => openEditDish(d)}>
+                        <Pencil className="w-4 h-4" /> Modifica
+                      </button>
+                      <button type="button" className="px-2 py-1 rounded-md bg-red-50 text-red-700 hover:bg-red-100 flex items-center gap-1" onClick={() => setDeleteTarget(d)}>
+                        <Trash2 className="w-4 h-4" /> Elimina
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                    {/* Raffigurazione desktop originale */}
                     {d.image ? (
-                      <img src={d.image} alt={d.name} className="w-full h-32 object-cover rounded-lg mb-3" />
+                      <img src={d.image} alt={d.name} className="w-full h-32 object-cover rounded-lg mb-3 hidden md:block" />
                     ) : (
-                      <div className="w-full h-32 rounded-lg mb-3 bg-neutral-gray-100 flex items-center justify-center text-neutral-gray-600 text-sm">
+                      <div className="w-full h-32 rounded-lg mb-3 bg-neutral-gray-100 flex items-center justify-center text-neutral-gray-600 text-sm hidden md:flex">
                         Nessuna immagine
                       </div>
                     )}
+
+                    {/* Informazioni e azioni */}
                     <div className="flex items-start justify-between gap-2">
-                      <div>
+                      <div className="hidden md:block">
                         <div className="text-base font-semibold">{d.name}</div>
                         <div className="text-sm text-neutral-gray-700">{d.category || '-'}</div>
                         {Array.isArray(d.allergens) && d.allergens.length > 0 && (
@@ -802,7 +845,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
                           </div>
                         )}
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="hidden md:flex items-center gap-2">
                         <button type="button" className="px-2 py-1 rounded-md bg-neutral-gray-200 hover:bg-neutral-gray-300 flex items-center gap-1" onClick={() => openEditDish(d)}>
                           <Pencil className="w-4 h-4" /> Modifica
                         </button>
@@ -811,6 +854,8 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
                         </button>
                       </div>
                     </div>
+
+                    {/* Prezzi */}
                     <div className="mt-3 grid grid-cols-3 gap-2 text-sm">
                       <div className="rounded-md bg-neutral-gray-100 p-2 text-right">
                         <div className="text-neutral-gray-700">Pinsa</div>
