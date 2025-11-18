@@ -288,9 +288,13 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   };
 
   const topProducts = useMemo(() => {
-    // Semplice selezione: primi 5 non-bevande
-    const nonDrinks = adaptedProducts.filter((p) => p.category !== 'bevande');
-    return nonDrinks.slice(0, 5);
+    // Mostra solo prodotti della categoria "Pinse" che hanno una foto
+    const pinseConFoto = adaptedProducts.filter((p) => {
+      const hasImage = typeof p.image === 'string' && p.image.trim() !== '';
+      const isPinse = typeof p.category === 'string' && p.category.toLowerCase() === 'pinse';
+      return hasImage && isPinse;
+    });
+    return pinseConFoto.slice(0, 5);
   }, [adaptedProducts]);
   const desiredCount = 5;
   const carouselProducts = (() => {
