@@ -121,7 +121,7 @@ const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
       name: d.name,
       description: d.description || '',
       category: (d.category as any),
-      image: d.image || '/menu1.jpg',
+      image: d.image || '',
       // Mappatura diretta dei prezzi per corrispondere esattamente alle colonne Supabase
       // Pinsa → slice, Tonda → half, Pala → full
       pricePerSlice: d.price_pinsa ?? 0,
@@ -346,7 +346,7 @@ const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
                       return (
                         <div key={cat.id} className="mb-10">
                           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">{cat.label}</h2>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                          <div className="grid items-start grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                             {productsInCat.map((product) => (
                               <ProductCard key={product.id} product={product} showFullDetails compact variant="menu" sizeLabels={{ slice: 'Pinsa', half: 'Tonda', full: 'Pala' }} />
                             ))}
@@ -363,7 +363,7 @@ const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
                       return (
                         <div className="mb-10">
                           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">{activeCat.label}</h2>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                          <div className="grid items-start grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                             {productsInCat.map((product) => (
                               <ProductCard key={product.id} product={product} showFullDetails compact variant="menu" sizeLabels={{ slice: 'Pinsa', half: 'Tonda', full: 'Pala' }} />
                             ))}
