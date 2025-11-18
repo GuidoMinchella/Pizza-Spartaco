@@ -213,6 +213,7 @@
       width: 34%; /* immagine leggermente più stretta */
       flex: 0 0 34%; /* mantiene larghezza fissa, non si espande */
       height: 9rem; /* altezza costante per card mobile */
+      border: none; /* rimuove il contorno bianco su mobile */
     }
     .menu-card .title {
       font-size: 0.95rem;
@@ -739,5 +740,22 @@
   }
   .login-ui .register-link a {
     font-size: 9px; /* link più compatto */
+  }
+}
+
+/* Animazioni mobile: slide-in da sinistra per sezione "Le nostre sedi" */
+@media (max-width: 640px) {
+  .mobile-slide {
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: transform 500ms ease-out, opacity 500ms ease-out;
+    will-change: transform, opacity;
+  }
+  .mobile-slide-start-left {
+    transform: translateX(-20px);
+  }
+  .mobile-slide-active {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
