@@ -350,7 +350,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
               className="px-3 py-2 rounded-lg bg-neutral-gray-800 text-white hover:bg-neutral-gray-700 flex items-center gap-2"
               onClick={fetchOverview}
             >
-              <RefreshCw className="w-4 h-4" /> Aggiorna
+              <RefreshCw className="w-4 h-4" />
             </button>
             {loading && <DotSpinner size="1.6rem" color="#ffffff" />}
             <button
@@ -783,7 +783,13 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {dishes.map((d) => (
                   <div key={d.id} className="rounded-xl bg-white text-black p-4 border border-neutral-gray-200 shadow-soft">
-                    <img src={d.image || '/menu1.jpg'} alt={d.name} className="w-full h-32 object-cover rounded-lg mb-3" />
+                    {d.image ? (
+                      <img src={d.image} alt={d.name} className="w-full h-32 object-cover rounded-lg mb-3" />
+                    ) : (
+                      <div className="w-full h-32 rounded-lg mb-3 bg-neutral-gray-100 flex items-center justify-center text-neutral-gray-600 text-sm">
+                        Nessuna immagine
+                      </div>
+                    )}
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <div className="text-base font-semibold">{d.name}</div>
