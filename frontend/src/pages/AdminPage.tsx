@@ -786,7 +786,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {dishes.map((d) => (
-                  <div key={d.id} className="rounded-xl text-black p-4 border border-neutral-gray-200 shadow-soft">
+                  <div key={d.id} className="rounded-xl text-black p-4 border border-neutral-gray-200 shadow-soft md:bg-white">
                     {/* Raffigurazione mobile come card del Menu */}
                     <div className={`md:hidden menu-card ${!d.image ? 'no-image' : ''}`}>
                       {d.image ? (
