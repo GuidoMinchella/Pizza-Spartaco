@@ -131,11 +131,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showFullDetails = fa
   
   // Variante stile "menu" basata sul CSS fornito (scoped su .menu-card)
   if (variant === 'menu') {
+    const noImage = !product.image;
     return (
-      <div className="menu-card">
-        <div className="image_container">
-          <img src={product.image} alt={product.name} className="image" loading="lazy" />
-        </div>
+      <div className={`menu-card ${noImage ? 'no-image' : ''}`}>
+        {product.image ? (
+          <div className="image_container">
+            <img src={product.image} alt={product.name} className="image" loading="lazy" />
+          </div>
+        ) : null}
         <div className="content">
           <div className="title-row">
             <div className="title"><span>{product.name}</span></div>
