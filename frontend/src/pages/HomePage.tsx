@@ -226,7 +226,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       name: d.name,
       description: d.description || '',
       category: d.category as any,
-      image: d.image || '/menu1.jpg',
+      image: d.image || '',
       pricePerSlice: d.price_pinsa ?? 0,
       priceHalfTray: d.price_tonda ?? 0,
       priceFullTray: d.price_pala ?? 0,
