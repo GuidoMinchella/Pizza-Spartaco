@@ -146,25 +146,51 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
   // Animazione on-view per "Le nostre sedi"
   const sediSectionRef = useRef<HTMLDivElement | null>(null);
+  const sediTitleRef = useRef<HTMLDivElement | null>(null);
+  const sediCard1Ref = useRef<HTMLDivElement | null>(null);
+  const sediCard2Ref = useRef<HTMLDivElement | null>(null);
   const [sediTitleReveal, setSediTitleReveal] = useState(false);
   const [sediCard1Reveal, setSediCard1Reveal] = useState(false);
   const [sediCard2Reveal, setSediCard2Reveal] = useState(false);
   useEffect(() => {
     const target = sediSectionRef.current;
     if (!target) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          setSediTitleReveal(true);
-          setTimeout(() => setSediCard1Reveal(true), 180);
-          setTimeout(() => setSediCard2Reveal(true), 360);
-          observer.disconnect();
-        }
-      },
-      { root: null, threshold: 0.5 }
-    );
-    observer.observe(target);
-    return () => observer.disconnect();
+    // Desktop: mantieni animazioni basate su IntersectionObserver
+    const isMobile = window.innerWidth <= 640;
+    if (!isMobile) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            setSediTitleReveal(true);
+            setTimeout(() => setSediCard1Reveal(true), 180);
+            setTimeout(() => setSediCard2Reveal(true), 360);
+            observer.disconnect();
+          }
+        },
+        { root: null, threshold: 0.5 }
+      );
+      observer.observe(target);
+      return () => observer.disconnect();
+    }
+    // Mobile: trigger quando raggiunge il 30% dell’altezza schermo
+    const thresholdPx = Math.round(window.innerHeight * 0.3);
+    const check = () => {
+      const tryReveal = (el: HTMLElement | null, setter: (v: boolean) => void, current: boolean) => {
+        if (!el || current) return;
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= thresholdPx) setter(true);
+      };
+      tryReveal(sediTitleRef.current, setSediTitleReveal, sediTitleReveal);
+      tryReveal(sediCard1Ref.current, setSediCard1Reveal, sediCard1Reveal);
+      tryReveal(sediCard2Ref.current, setSediCard2Reveal, sediCard2Reveal);
+    };
+    check();
+    window.addEventListener('scroll', check, { passive: true });
+    window.addEventListener('resize', check);
+    return () => {
+      window.removeEventListener('scroll', check);
+      window.removeEventListener('resize', check);
+    };
   }, []);
 
   // Dishes da Supabase per alimentare il carosello
@@ -572,14 +598,14 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       {/* Sezione: Le nostre sedi (nuova) */}
       <section className="section-padding bg-black">
         <div ref={sediSectionRef} className="container-custom">
-          <div className={`text-center mb-16 md:mb-20 transform transition-all duration-700 ease-out ${sediTitleReveal ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          <div ref={sediTitleRef} className={`text-center mb-16 md:mb-20 transform transition-all duration-700 ease-out ${sediTitleReveal ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'} mobile-slide mobile-slide-start-left ${sediTitleReveal ? 'mobile-slide-active' : ''}`}>
             <h2 className="text-4xl md:text-5xl font-bold text-white">
               Le nostre <span className="text-orange-500">sedi</span>
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            <div className={`flex justify-center transform transition-all duration-700 ease-out ${sediCard1Reveal ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            <div ref={sediCard1Ref} className={`flex justify-center transform transition-all duration-700 ease-out ${sediCard1Reveal ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'} mobile-slide mobile-slide-start-left ${sediCard1Reveal ? 'mobile-slide-active' : ''}`}>
               <div className="h-auto md:h-[640px] min-h-[520px] md:min-h-0" style={{ width: '100%', maxWidth: '560px', background: 'rgb(223, 225, 235)', borderRadius: '50px', boxShadow: 'rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px' }}>
                 <div className="h-full w-full p-6 md:p-8">
                   <h3 className="text-2xl md:text-3xl font-bold text-neutral-black mb-2">Pizza Spartaco</h3>
@@ -598,7 +624,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                 </div>
               </div>
             </div>
-            <div className={`flex justify-center transform transition-all duration-700 ease-out ${sediCard2Reveal ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            <div ref={sediCard2Ref} className={`flex justify-center transform transition-all duration-700 ease-out ${sediCard2Reveal ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'} mobile-slide mobile-slide-start-left ${sediCard2Reveal ? 'mobile-slide-active' : ''}`}>
               <div className="h-auto md:h-[640px] min-h-[520px] md:min-h-0" style={{ width: '100%', maxWidth: '560px', background: 'rgb(223, 225, 235)', borderRadius: '50px', boxShadow: 'rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px' }}>
                 <div className="h-full w-full p-6 md:p-8">
                   <h3 className="text-2xl md:text-3xl font-bold text-neutral-black mb-2">Pinsa Spartaco</h3>
