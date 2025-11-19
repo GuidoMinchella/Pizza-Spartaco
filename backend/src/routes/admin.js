@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { supabase, supabaseAdmin, isSupabaseConfigured } = require('../supabaseClient');
+const nodemailer = require('nodemailer');
+const { renderReviewEmailHtml } = require('../reviewEmailTemplate');
 const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
 const cloudinary = require('../cloudinary');
@@ -299,6 +301,104 @@ router.delete('/admin/dishes/:id', async (req, res) => {
     const { error } = await db.from('dishes').delete().eq('id', id);
     if (error) return res.status(500).json({ ok: false, error: error.message });
     return res.json({ ok: true, id });
+  } catch (e) {
+    return res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
+// INVIA SUBITO email di recensione (test manuale)
+// POST /admin/send-review-test
+// Body: { to_email: string, customer_name?: string }
+router.post('/admin/send-review-test', async (req, res) => {
+  try {
+    const { to_email, customer_name } = req.body || {};
+    const email = String(to_email || '').trim();
+    if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      return res.status(400).json({ ok: false, error: 'Email destinatario non valida' });
+    }
+
+    const host = process.env.SMTP_HOST || '';
+    const port = Number(process.env.SMTP_PORT || 0) || 587;
+    const user = process.env.SMTP_USER || '';
+    const pass = process.env.SMTP_PASS || '';
+    if (!host || !user || !pass) {
+      return res.status(500).json({ ok: false, error: 'Mailer non configurato (SMTP variabili mancanti)' });
+    }
+    const transporter = nodemailer.createTransport({
+      host,
+      port,
+      secure: port === 465,
+      auth: { user, pass },
+    });
+
+    const fromAddr = process.env.FROM_EMAIL || process.env.MAIL_FROM || 'no-reply@spartaco.local';
+    const html = renderReviewEmailHtml(customer_name);
+    await transporter.sendMail({
+      from: fromAddr,
+      to: email,
+      subject: 'Com’è andato l’ordine? Lascia una recensione ⭐️',
+      html,
+    });
+    return res.json({ ok: true, sent_to: email });
+  } catch (e) {
+    return res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
+// INVIA SUBITO email di recensione per un ordine specifico (ignora il timer 24h)
+// POST /admin/send-review-for-order
+// Body: { order_id: uuid }
+router.post('/admin/send-review-for-order', async (req, res) => {
+  try {
+    const { order_id } = req.body || {};
+    if (!order_id) {
+      return res.status(400).json({ ok: false, error: 'order_id mancante' });
+    }
+
+    if (!isSupabaseConfigured) {
+      return res.status(500).json({ ok: false, error: 'Supabase non configurato' });
+    }
+    const db = supabaseAdmin || supabase;
+    if (!db) {
+      return res.status(500).json({ ok: false, error: 'Client Supabase non disponibile' });
+    }
+
+    const { data: order, error: orderErr } = await db
+      .from('orders')
+      .select('id, user_email, user_first_name, user_last_name')
+      .eq('id', String(order_id))
+      .single();
+    if (orderErr) {
+      return res.status(500).json({ ok: false, error: orderErr.message });
+    }
+    if (!order || !order.user_email) {
+      return res.status(404).json({ ok: false, error: 'Ordine non trovato o senza email utente' });
+    }
+
+    const host = process.env.SMTP_HOST || '';
+    const port = Number(process.env.SMTP_PORT || 0) || 587;
+    const user = process.env.SMTP_USER || '';
+    const pass = process.env.SMTP_PASS || '';
+    if (!host || !user || !pass) {
+      return res.status(500).json({ ok: false, error: 'Mailer non configurato (SMTP variabili mancanti)' });
+    }
+    const transporter = nodemailer.createTransport({
+      host,
+      port,
+      secure: port === 465,
+      auth: { user, pass },
+    });
+
+    const name = (order.user_first_name || '').trim() || (order.user_last_name || '').trim() || '';
+    const fromAddr = process.env.FROM_EMAIL || process.env.MAIL_FROM || 'no-reply@spartaco.local';
+    const html = renderReviewEmailHtml(name);
+    await transporter.sendMail({
+      from: fromAddr,
+      to: String(order.user_email).trim(),
+      subject: 'Com’è andato l’ordine? Lascia una recensione ⭐️',
+      html,
+    });
+    return res.json({ ok: true, sent_to: String(order.user_email).trim(), order_id });
   } catch (e) {
     return res.status(500).json({ ok: false, error: e.message });
   }
