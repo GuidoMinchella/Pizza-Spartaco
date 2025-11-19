@@ -13,6 +13,7 @@ const ordersRouter = require('./routes/orders');
 const adminRouter = require('./routes/admin');
 const timeslotsRouter = require('./routes/timeslots');
 const paymentsRouter = require('./routes/payments');
+const { startReviewEmailScheduler } = require('./reviewEmails');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -47,4 +48,10 @@ app.use((req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Backend server in ascolto su http://localhost:${PORT}`);
+  try {
+    startReviewEmailScheduler();
+    console.log('Scheduler email recensioni avviato (ogni 10 minuti).');
+  } catch (_) {
+    console.log('Impossibile avviare lo scheduler email recensioni.');
+  }
 });
