@@ -1621,10 +1621,9 @@ const CartPage: React.FC<CartPageProps> = ({ onNavigate, onOpenRegisterModal, is
                           ? 'border-primary-orange bg-primary-orange/5 text-primary-orange'
                           : 'border-neutral-gray-300 hover:border-neutral-gray-400 text-neutral-black'
                       }`}
-                      disabled
                       onClick={() => { setPaymentMethod('online'); }}
                     >
-                       termporaneomente fuori servizio
+                      Paga ora Online
                       <img
                         src="/carta.svg"
                         alt="Pagamento online con carta"
