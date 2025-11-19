@@ -25,13 +25,29 @@ router.post('/payments/create-intent', async (req, res) => {
     }
     const curr = (currency || 'eur').toLowerCase();
 
-    const intent = await stripe.paymentIntents.create({
+    // Limita i metodi di pagamento: solo carta (che include Apple Pay/Google Pay se idonei)
+    // e PayPal. In caso di errore/indisponibilità di PayPal sull'account, effettua fallback su sola carta.
+    const baseParams = {
       amount: Math.round(amt),
       currency: curr,
       receipt_email: receipt_email || undefined,
       metadata: metadata || {},
-      automatic_payment_methods: { enabled: true },
-    });
+    };
+
+    let intent = null;
+    try {
+      intent = await stripe.paymentIntents.create({
+        ...baseParams,
+        payment_method_types: ['card', 'paypal'],
+      });
+    } catch (err) {
+      // Fallback: se PayPal non è abilitato/supportato sull'account o genera errore,
+      // prova con sola carta. Apple Pay/Google Pay compaiono tramite carta se il dominio è verificato/ambiente idoneo.
+      intent = await stripe.paymentIntents.create({
+        ...baseParams,
+        payment_method_types: ['card'],
+      });
+    }
 
     return res.json({ ok: true, clientSecret: intent.client_secret, intentId: intent.id });
   } catch (e) {
