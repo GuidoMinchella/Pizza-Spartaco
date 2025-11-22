@@ -11,7 +11,7 @@ interface AdminPageProps {
 }
 
 type AdminUser = { id: string; created_at: string; first_name: string; last_name: string; email: string };
-type AdminDish = { id: string; name: string; description: string | null; category: string | null; price_pinsa: number; price_tonda: number; price_pala: number; image: string | null; allergens?: string[] };
+type AdminDish = { id: string; name: string; description: string | null; category: string | null; price_pinsa: number; price_tonda: number; price_pala: number; image: string | null; allergens?: string[]; status?: boolean };
 type AdminOrderItem = { product_id: string; product_name: string; size: string; quantity: number; extras: { name: string; price: number }[]; unit_price: number; total_price: number };
 type AdminOrder = {
   id: string; created_at: string; user_id: string | null; user_first_name: string | null; user_last_name: string | null; user_email: string | null;
@@ -46,6 +46,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
   const [deleteTarget, setDeleteTarget] = useState<AdminDish | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [statusUpdating, setStatusUpdating] = useState<Record<string, boolean>>({});
   
   // Componente spinner riutilizzabile
   const DotSpinner: React.FC<{ className?: string; size?: string; color?: string }> = ({ className, size = '2.0rem', color = '#183153' }) => {
@@ -303,6 +304,28 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
       setDeleteError(e?.message || 'Errore eliminazione');
     } finally {
       setDeleteLoading(false);
+    }
+  };
+
+  const onToggleDishStatus = async (dish: AdminDish, next: boolean) => {
+    try {
+      setError(null);
+      setStatusUpdating((prev) => ({ ...prev, [dish.id]: true }));
+      const resp = await fetch(apiUrl(`admin/dishes/${encodeURIComponent(dish.id)}/status?user_id=${encodeURIComponent(userId)}`), {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: !!next }),
+      });
+      const json = await resp.json();
+      if (!resp.ok || !json?.ok) {
+        throw new Error(json?.error || 'Errore aggiornamento stato piatto');
+      }
+      const updated: AdminDish = json.dish;
+      setDishes((prev) => prev.map((d) => (d.id === updated.id ? { ...d, status: updated.status } : d)));
+    } catch (e: any) {
+      setError(e?.message || 'Errore sconosciuto');
+    } finally {
+      setStatusUpdating((prev) => ({ ...prev, [dish.id]: false }));
     }
   };
 
@@ -789,6 +812,22 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
                   <div key={d.id} className="rounded-xl text-black p-4 border border-neutral-gray-200 shadow-soft md:bg-white">
                     {/* Raffigurazione mobile come card del Menu */}
                     <div className={`md:hidden menu-card ${!d.image ? 'no-image' : ''}`}>
+                      {/* Interruttore attiva/disattiva – mobile (in alto a destra) */}
+                      <div className="dish-switch dish-switch-mobile md:hidden">
+                        <div className="container">
+                          <input
+                            type="checkbox"
+                            className="checkbox"
+                            id={`switch-${d.id}-mobile`}
+                            checked={!!d.status}
+                            onChange={(e) => onToggleDishStatus(d, e.target.checked)}
+                            disabled={!!statusUpdating[d.id]}
+                          />
+                          <label className="switch" htmlFor={`switch-${d.id}-mobile`}>
+                            <span className="slider"></span>
+                          </label>
+                        </div>
+                      </div>
                       {d.image ? (
                         <div className="image_container">
                           <img src={d.image} alt={d.name} className="image" loading="lazy" />
@@ -868,6 +907,25 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
                       <div className="rounded-md bg-neutral-gray-100 p-2 text-right">
                         <div className="text-neutral-gray-700">Pala</div>
                         <div className="font-semibold">{d.price_pala != null ? currency.format(Number(d.price_pala || 0)) : '-'}</div>
+                      </div>
+                    </div>
+
+                    {/* Interruttore attiva/disattiva – desktop (in basso alla card) */}
+                    <div className="mt-3 hidden md:flex justify-end">
+                      <div className="dish-switch dish-switch-desktop">
+                        <div className="container">
+                          <input
+                            type="checkbox"
+                            className="checkbox"
+                            id={`switch-${d.id}-desktop`}
+                            checked={!!d.status}
+                            onChange={(e) => onToggleDishStatus(d, e.target.checked)}
+                            disabled={!!statusUpdating[d.id]}
+                          />
+                          <label className="switch" htmlFor={`switch-${d.id}-desktop`}>
+                            <span className="slider"></span>
+                          </label>
+                        </div>
                       </div>
                     </div>
                   </div>
