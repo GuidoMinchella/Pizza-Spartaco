@@ -49,7 +49,7 @@ router.get('/admin/overview', async (req, res) => {
     // Piatti
     const { data: dishes, error: dishesErr } = await db
       .from('dishes')
-      .select('id, name, description, category, price_pinsa, price_tonda, price_pala, image, allergens')
+      .select('id, name, description, category, price_pinsa, price_tonda, price_pala, image, allergens, status')
       .order('name', { ascending: true });
     if (dishesErr) return res.status(500).json({ ok: false, error: dishesErr.message });
 
@@ -154,12 +154,13 @@ router.post('/admin/dishes', async (req, res) => {
       price_pala: numOrNull(price_pala),
       image: image || null,
       allergens: Array.isArray(allergens) ? allergens.map((a) => String(a)) : [],
+      status: true,
     };
 
     const { data: created, error } = await db
       .from('dishes')
       .insert(row)
-      .select('id, name, description, category, price_pinsa, price_tonda, price_pala, image, allergens')
+      .select('id, name, description, category, price_pinsa, price_tonda, price_pala, image, allergens, status')
       .single();
     if (error) return res.status(500).json({ ok: false, error: error.message });
     return res.status(201).json({ ok: true, dish: created });
@@ -268,7 +269,47 @@ router.patch('/admin/dishes/:id', async (req, res) => {
       .from('dishes')
       .update(updateRow)
       .eq('id', id)
-      .select('id, name, description, category, price_pinsa, price_tonda, price_pala, image, allergens')
+      .select('id, name, description, category, price_pinsa, price_tonda, price_pala, image, allergens, status')
+      .single();
+    if (error) return res.status(500).json({ ok: false, error: error.message });
+    if (!updated) return res.status(404).json({ ok: false, error: 'Piatto non trovato' });
+    return res.json({ ok: true, dish: updated });
+  } catch (e) {
+    return res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
+// PATCH /admin/dishes/:id/status?user_id=<uuid>
+// Body: { status: boolean }
+router.patch('/admin/dishes/:id/status', async (req, res) => {
+  try {
+    if (!isSupabaseConfigured) {
+      return res.status(500).json({ ok: false, error: 'Supabase non configurato' });
+    }
+    const db = supabaseAdmin || supabase;
+    if (!db) {
+      return res.status(500).json({ ok: false, error: 'Client Supabase non disponibile' });
+    }
+
+    const { user_id } = req.query || {};
+    const check = await ensureAdmin(db, user_id);
+    if (!check.ok) {
+      return res.status(403).json({ ok: false, error: check.error });
+    }
+
+    const { id } = req.params || {};
+    const { status } = req.body || {};
+
+    if (!id) return res.status(400).json({ ok: false, error: 'ID piatto mancante' });
+    if (typeof status !== 'boolean') {
+      return res.status(400).json({ ok: false, error: 'Stato non valido: atteso boolean' });
+    }
+
+    const { data: updated, error } = await db
+      .from('dishes')
+      .update({ status })
+      .eq('id', String(id))
+      .select('id, name, description, category, price_pinsa, price_tonda, price_pala, image, allergens, status')
       .single();
     if (error) return res.status(500).json({ ok: false, error: error.message });
     if (!updated) return res.status(404).json({ ok: false, error: 'Piatto non trovato' });
