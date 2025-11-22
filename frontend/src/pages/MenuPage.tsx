@@ -114,6 +114,24 @@ const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
     return [{ id: 'all', label: 'Tutte' }, ...list.map((c) => ({ id: c, label: c.charAt(0).toUpperCase() + c.slice(1) }))];
   }, [dishes]);
 
+  // Ordine preferito sotto "Tutte": Pinse, Fritti, poi tutte le altre (alfabetico)
+  const sortedCategoriesForAll = useMemo(() => {
+    const preferredOrder = ['pinse', 'fritti'];
+    const score = (id: string) => {
+      const idx = preferredOrder.indexOf(String(id).toLowerCase());
+      return idx >= 0 ? idx : preferredOrder.length + 1;
+    };
+    return categories
+      .filter((c) => c.id !== 'all')
+      .slice()
+      .sort((a, b) => {
+        const sa = score(a.id);
+        const sb = score(b.id);
+        if (sa !== sb) return sa - sb;
+        return a.label.localeCompare(b.label, 'it', { sensitivity: 'base' });
+      });
+  }, [categories]);
+
   const filteredProducts = useMemo(() => {
     // Adatta i piatti in formato Product per usare ProductCard e il carrello
     const adapt = (d: Dish) => ({
@@ -136,13 +154,21 @@ const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
     const products = dishes.map(adapt);
     // Non filtriamo per categoria: mostriamo sempre tutte le sezioni;
     // filtriamo solo per ricerca.
-    return products.filter((product) => {
+    const filtered = products.filter((product) => {
       const matchesSearch =
         searchQuery === '' ||
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         product.description.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesSearch;
     });
+    // Ordine generale per prezzo minimo disponibile (influenza l'ordine relativo per categoria)
+    const minPrice = (p: any) => {
+      const vals = [p.pricePerSlice, p.priceHalfTray, p.priceFullTray]
+        .map((v) => Number(v))
+        .filter((v) => Number.isFinite(v) && v > 0);
+      return vals.length ? Math.min(...vals) : Number.POSITIVE_INFINITY;
+    };
+    return filtered.sort((a, b) => minPrice(a) - minPrice(b));
   }, [dishes, searchQuery]);
 
   // Rimozione refs e logica di scroll; usiamo solo filtro per categoria al click
@@ -340,8 +366,16 @@ const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
                 </div>
                 {activeCategory === 'all'
                   ? (
-                    categories.filter(c => c.id !== 'all').map((cat) => {
-                      const productsInCat = filteredProducts.filter((p) => p.category === cat.id);
+                    sortedCategoriesForAll.map((cat) => {
+                      const productsInCat = filteredProducts
+                        .filter((p) => p.category === cat.id)
+                        .sort((a, b) => {
+                          const aVals = [a.pricePerSlice, a.priceHalfTray, a.priceFullTray].filter((v) => Number(v) > 0);
+                          const bVals = [b.pricePerSlice, b.priceHalfTray, b.priceFullTray].filter((v) => Number(v) > 0);
+                          const aMin = aVals.length ? Math.min(...aVals.map(Number)) : Number.POSITIVE_INFINITY;
+                          const bMin = bVals.length ? Math.min(...bVals.map(Number)) : Number.POSITIVE_INFINITY;
+                          return aMin - bMin;
+                        });
                       if (productsInCat.length === 0) return null;
                       return (
                         <div key={cat.id} className="mb-10">
@@ -358,7 +392,15 @@ const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
                   : (
                     (() => {
                       const activeCat = categories.find((c) => c.id === activeCategory);
-                      const productsInCat = filteredProducts.filter((p) => p.category === activeCategory);
+                      const productsInCat = filteredProducts
+                        .filter((p) => p.category === activeCategory)
+                        .sort((a, b) => {
+                          const aVals = [a.pricePerSlice, a.priceHalfTray, a.priceFullTray].filter((v) => Number(v) > 0);
+                          const bVals = [b.pricePerSlice, b.priceHalfTray, b.priceFullTray].filter((v) => Number(v) > 0);
+                          const aMin = aVals.length ? Math.min(...aVals.map(Number)) : Number.POSITIVE_INFINITY;
+                          const bMin = bVals.length ? Math.min(...bVals.map(Number)) : Number.POSITIVE_INFINITY;
+                          return aMin - bMin;
+                        });
                       if (!activeCat || productsInCat.length === 0) return null;
                       return (
                         <div className="mb-10">
@@ -379,8 +421,16 @@ const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
             <div className="md:hidden">
               {activeCategory === 'all'
                 ? (
-                  categories.filter(c => c.id !== 'all').map((cat) => {
-                    const productsInCat = filteredProducts.filter((p) => p.category === cat.id);
+                  sortedCategoriesForAll.map((cat) => {
+                    const productsInCat = filteredProducts
+                      .filter((p) => p.category === cat.id)
+                      .sort((a, b) => {
+                        const aVals = [a.pricePerSlice, a.priceHalfTray, a.priceFullTray].filter((v) => Number(v) > 0);
+                        const bVals = [b.pricePerSlice, b.priceHalfTray, b.priceFullTray].filter((v) => Number(v) > 0);
+                        const aMin = aVals.length ? Math.min(...aVals.map(Number)) : Number.POSITIVE_INFINITY;
+                        const bMin = bVals.length ? Math.min(...bVals.map(Number)) : Number.POSITIVE_INFINITY;
+                        return aMin - bMin;
+                      });
                     if (productsInCat.length === 0) return null;
                     return (
                       <div key={cat.id} className="mb-10">
@@ -399,7 +449,15 @@ const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
                 : (
                   (() => {
                     const activeCat = categories.find((c) => c.id === activeCategory);
-                    const productsInCat = filteredProducts.filter((p) => p.category === activeCategory);
+                    const productsInCat = filteredProducts
+                      .filter((p) => p.category === activeCategory)
+                      .sort((a, b) => {
+                        const aVals = [a.pricePerSlice, a.priceHalfTray, a.priceFullTray].filter((v) => Number(v) > 0);
+                        const bVals = [b.pricePerSlice, b.priceHalfTray, b.priceFullTray].filter((v) => Number(v) > 0);
+                        const aMin = aVals.length ? Math.min(...aVals.map(Number)) : Number.POSITIVE_INFINITY;
+                        const bMin = bVals.length ? Math.min(...bVals.map(Number)) : Number.POSITIVE_INFINITY;
+                        return aMin - bMin;
+                      });
                     if (!activeCat || productsInCat.length === 0) return null;
                     return (
                       <div className="mb-10">
