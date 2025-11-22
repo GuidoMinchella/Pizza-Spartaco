@@ -11,8 +11,11 @@ router.get('/menu', async (req, res) => {
     const { category } = req.query || {};
     let query = client
       .from('dishes')
-      .select('id, name, description, category, price_pinsa, price_tonda, price_pala, image, allergens')
+      .select('id, name, description, category, price_pinsa, price_tonda, price_pala, image, allergens, status')
       .order('name', { ascending: true });
+
+    // Mostra solo i piatti attivi nel menù pubblico
+    query = query.eq('status', true);
 
     if (category) {
       query = query.eq('category', String(category));
