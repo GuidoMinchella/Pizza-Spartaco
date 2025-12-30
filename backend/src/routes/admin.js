@@ -116,6 +116,84 @@ router.get('/admin/overview', async (req, res) => {
   }
 });
 
+// GET /admin/settings?user_id=<uuid> - impostazioni globali (solo admin)
+router.get('/admin/settings', async (req, res) => {
+  try {
+    if (!isSupabaseConfigured) {
+      return res.status(200).json({ ok: true, settings: { orders_enabled: true }, message: 'Supabase non configurato' });
+    }
+    const db = supabaseAdmin || supabase;
+    if (!db) {
+      return res.status(200).json({ ok: true, settings: { orders_enabled: true }, message: 'Client Supabase non disponibile' });
+    }
+
+    const { user_id } = req.query || {};
+    const check = await ensureAdmin(db, user_id);
+    if (!check.ok) {
+      return res.status(403).json({ ok: false, error: check.error });
+    }
+
+    const { data, error } = await db
+      .from('site_settings')
+      .select('orders_enabled')
+      .eq('id', 1)
+      .single();
+    
+    // Se errore (es. tabella mancante), ritorniamo default true senza errore 500
+    if (error) {
+      console.warn('GET /admin/settings warning:', error.message);
+      return res.json({ ok: true, settings: { orders_enabled: true } });
+    }
+    
+    const enabled = data?.orders_enabled !== false;
+    return res.json({ ok: true, settings: { orders_enabled: enabled } });
+  } catch (e) {
+    return res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
+// PATCH /admin/settings/orders-enabled?user_id=<uuid>
+// Body: { enabled: boolean }
+router.patch('/admin/settings/orders-enabled', async (req, res) => {
+  try {
+    if (!isSupabaseConfigured) {
+      return res.status(500).json({ ok: false, error: 'Supabase non configurato' });
+    }
+    const db = supabaseAdmin || supabase;
+    if (!db) {
+      return res.status(500).json({ ok: false, error: 'Client Supabase non disponibile' });
+    }
+
+    const { user_id } = req.query || {};
+    const check = await ensureAdmin(db, user_id);
+    if (!check.ok) {
+      return res.status(403).json({ ok: false, error: check.error });
+    }
+
+    const { enabled } = req.body || {};
+    if (typeof enabled !== 'boolean') {
+      return res.status(400).json({ ok: false, error: 'Valore non valido: atteso boolean' });
+    }
+
+    const { data, error } = await db
+      .from('site_settings')
+      .upsert({ id: 1, orders_enabled: enabled, updated_at: new Date().toISOString() }, { onConflict: 'id' })
+      .select('orders_enabled')
+      .single();
+    if (error) {
+      console.error('PATCH /admin/settings/orders-enabled error:', error);
+      // Messaggio più chiaro se la tabella manca
+      if (error.message && error.message.includes('relation') && error.message.includes('does not exist')) {
+        return res.status(500).json({ ok: false, error: 'Tabella site_settings mancante nel DB. Esegui lo script SQL.' });
+      }
+      return res.status(500).json({ ok: false, error: error.message });
+    }
+    return res.json({ ok: true, settings: { orders_enabled: data?.orders_enabled !== false } });
+  } catch (e) {
+    return res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
 // CREA nuovo piatto: POST /admin/dishes?user_id=<uuid>
 router.post('/admin/dishes', async (req, res) => {
   try {
