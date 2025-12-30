@@ -138,6 +138,18 @@ router.post('/orders', async (req, res) => {
       return res.status(400).json({ ok: false, error: 'Numero di telefono non valido' });
     }
 
+    // Blocca ordini se disabilitati dalle impostazioni globali
+    try {
+      const { data: settings, error: settingsErr } = await db
+        .from('site_settings')
+        .select('orders_enabled')
+        .eq('id', 1)
+        .single();
+      if (!settingsErr && settings && settings.orders_enabled === false) {
+        return res.status(403).json({ ok: false, error: 'Al momento non è possibile effettuare ordini. Ci scusiamo per il disagio, tornate domani!!' });
+      }
+    } catch (_) {}
+
     if (mode === 'delivery') {
       if (!address || !cap || !buzzer || !delivery_time) {
         return res.status(400).json({ ok: false, error: 'Campi consegna mancanti (indirizzo, CAP, citofono, orario consegna)' });
@@ -426,6 +438,29 @@ router.get('/orders', async (req, res) => {
     }));
 
     return res.json({ ok: true, orders: result });
+  } catch (e) {
+    return res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
+// GET /orders/settings - stato pubblico ordini abilitati/disabilitati
+router.get('/orders/settings', async (req, res) => {
+  try {
+    if (!isSupabaseConfigured) {
+      return res.status(200).json({ ok: true, orders_enabled: true, message: 'Supabase non configurato' });
+    }
+    const client = supabaseAdmin || supabase;
+    if (!client) {
+      return res.status(200).json({ ok: true, orders_enabled: true, message: 'Client Supabase non disponibile' });
+    }
+    const { data, error } = await client
+      .from('site_settings')
+      .select('orders_enabled')
+      .eq('id', 1)
+      .single();
+    if (error) return res.status(500).json({ ok: false, error: error.message });
+    const enabled = data?.orders_enabled !== false;
+    return res.json({ ok: true, orders_enabled: enabled });
   } catch (e) {
     return res.status(500).json({ ok: false, error: e.message });
   }
