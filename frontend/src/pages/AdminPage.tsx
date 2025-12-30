@@ -47,6 +47,8 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [statusUpdating, setStatusUpdating] = useState<Record<string, boolean>>({});
+  const [ordersEnabled, setOrdersEnabled] = useState<boolean>(true);
+  const [ordersEnabledUpdating, setOrdersEnabledUpdating] = useState<boolean>(false);
   
   // Componente spinner riutilizzabile
   const DotSpinner: React.FC<{ className?: string; size?: string; color?: string }> = ({ className, size = '2.0rem', color = '#183153' }) => {
@@ -168,6 +170,35 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
       setError(e?.message || 'Errore sconosciuto');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchSettings = async () => {
+    if (!userId) return;
+    try {
+      const resp = await fetch(apiUrl(`admin/settings?user_id=${encodeURIComponent(userId)}`));
+      const json = await resp.json();
+      if (!resp.ok || !json?.ok) return;
+      setOrdersEnabled(json.settings?.orders_enabled !== false);
+    } catch {}
+  };
+
+  const toggleOrdersEnabled = async (next: boolean) => {
+    try {
+      setOrdersEnabledUpdating(true);
+      const resp = await fetch(apiUrl(`admin/settings/orders-enabled?user_id=${encodeURIComponent(userId)}`), {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled: !!next }),
+      });
+      const json = await resp.json();
+      if (resp.ok && json?.ok) {
+        setOrdersEnabled(json.settings?.orders_enabled !== false);
+      }
+    } catch (e: any) {
+      setError(e?.message || 'Errore aggiornamento impostazioni');
+    } finally {
+      setOrdersEnabledUpdating(false);
     }
   };
 
@@ -332,6 +363,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
   useEffect(() => {
     if (!isAdmin) return;
     fetchOverview();
+    fetchSettings();
   }, [userId, isAdmin]);
 
   if (!isAdmin) {
@@ -496,6 +528,30 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
 
         {activeTab === 'orders' && (
           <>
+            <section className="mt-4">
+              <div className="rounded-xl bg-white text-black p-4 border border-neutral-gray-200 flex items-center justify-between">
+                <div>
+                  <h3 className="text-base font-semibold">Sospendi ordini</h3>
+                  <p className="text-sm text-neutral-gray-700">Se attivo, i clienti non possono effettuare ordini dal carrello</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  {ordersEnabledUpdating && <DotSpinner size="1.6rem" />}
+                  <label className="inline-flex items-center cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      className="sr-only"
+                      checked={!ordersEnabled}
+                      onChange={(e) => toggleOrdersEnabled(!e.target.checked)}
+                      aria-label="Sospendi ordini"
+                    />
+                    <div className={`w-12 h-6 rounded-full transition ${!ordersEnabled ? 'bg-neutral-black' : 'bg-neutral-gray-300'}`}
+                         role="switch" aria-checked={!ordersEnabled}>
+                      <div className={`h-5 w-5 bg-white rounded-full shadow transform transition translate-x-1 ${!ordersEnabled ? 'translate-x-6' : ''}`}></div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </section>
             {/* Pannello Oggi */}
             <section className="mt-8">
               <h2 className="text-xl font-semibold text-white mb-3">Oggi</h2>
