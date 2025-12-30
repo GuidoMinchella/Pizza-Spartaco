@@ -188,6 +188,7 @@ const CartPage: React.FC<CartPageProps> = ({ onNavigate, onOpenRegisterModal, is
   const [stripeError, setStripeError] = useState<string | null>(null);
   const [stripeProcessing, setStripeProcessing] = useState(false);
   const [stripePaidSuccess, setStripePaidSuccess] = useState(false);
+  const [ordersEnabled, setOrdersEnabled] = useState<boolean>(true);
   // Flag per validazione metodo di pagamento nello step 2 (domicilio)
   const [paymentAttempted, setPaymentAttempted] = useState(false);
   // Vista unica: mostra la sezione "Riepilogo ordine" su richiesta
@@ -375,6 +376,18 @@ const CartPage: React.FC<CartPageProps> = ({ onNavigate, onOpenRegisterModal, is
     return () => {
       cancelled = true;
     };
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const resp = await fetch(apiUrl('orders/settings'));
+        const json = await resp.json();
+        if (resp.ok && json?.ok) {
+          setOrdersEnabled(json.orders_enabled !== false);
+        }
+      } catch {}
+    })();
   }, []);
 
   // Aggiorna automaticamente il filtro degli slot ogni minuto in base all'orario corrente
@@ -882,6 +895,20 @@ const CartPage: React.FC<CartPageProps> = ({ onNavigate, onOpenRegisterModal, is
             </div>
 
             {/* Modalità di consegna - spostata sotto */}
+            {!ordersEnabled && (
+              <div className="card w-full mx-auto p-4 md:p-6">
+                <div className="rounded-xl border border-neutral-gray-200 bg-white p-4">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
+                    <div>
+                      <h3 className="text-lg font-semibold text-neutral-black">Ordini temporaneamente sospesi</h3>
+                      <p className="text-sm text-neutral-gray-700">Al momento non è possibile effettuare ordini. Ci scusiamo per il disagio, tornate domani!!</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            {ordersEnabled && (
             <div className="card w-full mx-auto p-4 md:p-6">
               {/* Percorso checkout rimosso: pagina unica senza step */}
 
@@ -997,7 +1024,8 @@ const CartPage: React.FC<CartPageProps> = ({ onNavigate, onOpenRegisterModal, is
                             Ci dispiace, i nostri rider non arrivano fino a voi. Puoi venire a ritirare direttamente al locale il tuo ordine
                           </p>
                         )}
-                      </div>
+              </div>
+            
                     </div>
                   </div>
 
@@ -1590,11 +1618,10 @@ const CartPage: React.FC<CartPageProps> = ({ onNavigate, onOpenRegisterModal, is
                 </>
               )}
             </div>
-              </>
             )}
 
             {/* Metodo di pagamento: visibile solo per Domicilio e non in review */}
-            {!orderConfirmed && deliveryInfo.type === 'delivery' && !showReview && (
+            {ordersEnabled && !orderConfirmed && deliveryInfo.type === 'delivery' && !showReview && (
               <div className="card w-full mx-auto p-4 md:p-6">
                 <h2 className="text-2xl font-bold text-neutral-black mb-4">Metodo di pagamento</h2>
 
@@ -1641,22 +1668,26 @@ const CartPage: React.FC<CartPageProps> = ({ onNavigate, onOpenRegisterModal, is
                 {requiredFieldsError && (
                   <p className="text-sm text-red-600 mt-2">{requiredFieldsError}</p>
                 )}
+                {stripeError && paymentMethod === 'online' && !showStripePanel && (
+                  <p className="text-sm text-red-600 mt-2">{stripeError}</p>
+                )}
 
                 {/* Stripe inline rimosso: ora la vista Stripe è a pagina pulita */}
               </div>
             )}
 
             {/* Pulsante finale per accedere al riepilogo */}
-            {!orderConfirmed && !submittingOrder && !showReview && (
+            {ordersEnabled && !orderConfirmed && !submittingOrder && !showReview && (
               <div className="pt-2">
                 <button className="btn-primary w-full" onClick={handlePaymentContinue}>
                   Procedi
                 </button>
               </div>
             )}
+              </>
+            )}
 
-
-            {showReview && !orderConfirmed && (
+            {ordersEnabled && showReview && !orderConfirmed && (
               <div className="card w-full mx-auto p-4 md:p-6">
                 <h2 className="text-2xl font-bold text-neutral-black mb-4">Riepilogo ordine</h2>
                
