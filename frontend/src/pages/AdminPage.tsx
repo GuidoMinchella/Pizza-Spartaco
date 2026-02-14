@@ -647,7 +647,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
                                 <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Metodo di consegna:</span> {o.mode === 'delivery' ? 'Consegna' : 'Asporto'}</div>
                               <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Metodo di pagamento:</span> {o.payment_method || (o.mode === 'pickup' ? 'Pagamento al ritiro' : 'Pagamento alla consegna')}</div>
                               {o.notes_rider && (
-                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Note per il rider:</span> {o.notes_rider}</div>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Allergeni , preferenze sull'ordine , eventuali istruzioni per la consegna:</span> {o.notes_rider}</div>
                               )}
                               </div>
 
@@ -793,7 +793,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ userId, isAdmin, onNavigate }) =>
                                 <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Metodo di consegna:</span> {o.mode === 'delivery' ? 'Consegna' : 'Asporto'}</div>
                               <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Metodo di pagamento:</span> {o.payment_method || (o.mode === 'pickup' ? 'Pagamento al ritiro' : 'Pagamento alla consegna')}</div>
                               {o.notes_rider && (
-                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Note per il rider:</span> {o.notes_rider}</div>
+                                <div className="text-xs md:text-sm"><span className="text-neutral-gray-700">Allergeni , preferenze sull'ordine , eventuali istruzioni per la consegna:</span> {o.notes_rider}</div>
                               )}
                               </div>
 
