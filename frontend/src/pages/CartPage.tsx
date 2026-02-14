@@ -1139,7 +1139,7 @@ const CartPage: React.FC<CartPageProps> = ({ onNavigate, onOpenRegisterModal, is
 
                   <div>
                     <label className="block text-sm font-medium text-neutral-gray-700 mb-2">
-                      Note per il rider
+                      Allergeni , preferenze sull'ordine , eventuali istruzioni per la consegna 
                     </label>
                     <textarea
                       value={notes}
@@ -1525,7 +1525,7 @@ const CartPage: React.FC<CartPageProps> = ({ onNavigate, onOpenRegisterModal, is
                                 <span className="font-medium text-neutral-black">{paymentMethod === 'cash' ? 'Contanti' : paymentMethod === 'online' ? 'Online' : '-'}</span>
                               </div>
                               <div className="p-3 rounded-lg bg-neutral-gray-50 sm:col-span-2">
-                                <span className="block text-sm text-neutral-gray-600">Note per il rider</span>
+                                <span className="block text-sm text-neutral-gray-600">Allergeni , preferenze sull'ordine , eventuali istruzioni per la consegna</span>
                                 <span className="font-medium text-neutral-black">{notes || '-'}</span>
                               </div>
                             </div>
@@ -1900,7 +1900,7 @@ const CartPage: React.FC<CartPageProps> = ({ onNavigate, onOpenRegisterModal, is
                             <span className="font-medium text-neutral-black">{deliveryTime || '-'}</span>
                           </div>
                           <div className="p-3 rounded-lg bg-neutral-gray-50 sm:col-span-2">
-                            <span className="block text-sm text-neutral-gray-600">Note per il rider</span>
+                            <span className="block text-sm text-neutral-gray-600">Allergeni , preferenze sull'ordine , eventuali istruzioni per la consegna</span>
                             <span className="font-medium text-neutral-black">{notes || '-'}</span>
                           </div>
                           <div className="p-3 rounded-lg bg-neutral-gray-50 sm:col-span-2">
